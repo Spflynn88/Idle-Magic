@@ -74,5 +74,10 @@ class ResourceManager:
         if value >= 0:
             self._essence_max = value
 
-    def update(self):
-        pass
+    def update(self, t_value):
+        # This takes in a tuple for now that is all of the resources listed in order: Mana, Essence, Gold
+        self._mana += t_value[0]
+        self._essence += t_value[1]
+
+        return self._mana, self._essence, 0 # ) is for gold yeild, not yet decided on
+

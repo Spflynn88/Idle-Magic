@@ -10,7 +10,7 @@ SPRITE_FOLDER = os.path.join('.', 'sprites')
 
 TILE_SIZE = 112
 
-RESOURCE_GAIN_TIME = 5000 # In ms for timer
+RESOURCE_GAIN_TIME = 1000 # In ms for timer
 
 # Start Vars
 STRT_POP_MAX = 10
@@ -29,8 +29,8 @@ MONSTER_CONFIGS = {
                  "attack": 2,
                  "defense": 1,
                  "type": "arcane",
-                 "resource_type": "mana",
-                 "resource_yield": 5,
+                 "mana_yield": 5,
+                 "essence_yield": 5,
                  "currentXP": 0,
                  "level": 0,
                  "image": "mon_mana_imp",

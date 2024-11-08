@@ -76,26 +76,28 @@ class Game:
 
         self.monster_mngr.add_monster("Mana_Imp", (25, 25))
 
-    def update(self):
-        pass
+    def update(self, t_mon_yield):
+        # FIXME - Game needs to go get all the info from it's managers and then parcel it out.
+        resource_count = self.resource_mngr.update(t_mon_yield)
+        self.ui_mngr.update(resource_count)
 
     # Button functions
 
     def run(self) -> None:  # My need to change this later, part of a new code clarity initiate
 
         while True:
+            mon_yield = (0, 0, 0) # FIXME this is not right rework
             # Event Loop
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
                 if event.type == self.event_resource_gain:
-                    # Gain resources here
-                    pass
+                    mon_yield = self.monster_mngr.calc_resource_yield()
 
 
             # Game logic
-            self.update()
+            self.update(mon_yield)
 
             # Render
             # Clear the screen

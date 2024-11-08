@@ -19,16 +19,15 @@ class UIManager:
         # UI creates all of its elements
         self.resource_panel = ResourcesPanel(UI_RESOURCE_BAR_POS, self.ui_images["ui_resource_bar"], self.g_ui_elements)
 
-    def update(self):
+    def update(self, t_resource_count):
         # called from Game
         # self.healthbar.update() <- example
-        self.resource_panel.update()
-        pass
+        self.resource_panel.update(*t_resource_count) # FIXME - proper values
+
 
     def render(self, display_surface):
         # FIXME This is a stretch but the UI should only update - see performance notes
         # if all the ui is in the sprite group then just draw that sprite group for now i guess
-        #self.resource_panel.render()
         self.g_ui_elements.draw(display_surface)
 
 
@@ -59,8 +58,26 @@ class ResourcesPanel(Sprite):
     def __init__(self, pos, t_image, group):
         super().__init__(group)
         self.image = t_image
+        self.image_base = t_image
         self.rect = self.image.get_rect(center=pos)
-        print("class ResourcesPanel - created")
 
-    def update(self):
+        self.font = pygame.font.Font(None, 36)
+        self.text = "Start"
+        self.color = (0,0,0)
+        self.text_pos = (88, 26)
+        self.text_surf = self.font.render(self.text, True, self.color)
+
+    def update(self, t_mana, t_essence, t_gold):
+        # Wipe Surface
+        self.image = self.image_base.copy()
+
+        # Update Surface
+        self.text = f"{t_mana:<32}{t_essence}" # Update the text
+        self.text_surf = self.font.render(self.text, True, self.color) # Update the text surface
+        self.image.blit(self.text_surf, self.text_pos)
+
+
+    def render(self):
         pass
+    # Still don't need render. Sprite draw works fine, I'm just blit-ing the text onto its own image
+

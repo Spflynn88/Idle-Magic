@@ -16,6 +16,19 @@ class MonsterManager:
 
         Monster(name, pos, self.monster_sprites, config)
 
+    def calc_resource_yield(self):
+        _mana_yield = 0
+        _essence_yield = 0
+        _gold_yield = 0
+        for monster in self.monster_sprites:
+            mon_yield = monster.gather_resources()
+            _mana_yield += mon_yield["mana_yield"]
+            _essence_yield += mon_yield["essence_yield"]
+
+        return _mana_yield, _essence_yield, _gold_yield
+
+            # FIXME monsters need setters and getters for all propeties
+
     def update(self):
         pass
 
@@ -33,15 +46,15 @@ class Monster(Sprite):
         self.name = name
         self.health = config["health"]
         self.attack = config["attack"]
-        self.resource_type = config["resource_type"]
-        self.resource_yield = config["resource_yield"]
+        self.mana_yield = config["mana_yield"]
+        self.essence_yield = config["essence_yield"]
 
         # Position and sprite setup
         self.image = config["image"]
         self.rect = self.image.get_rect(topleft=pos)
 
     def gather_resources(self):
-        return {self.resource_type: self.resource_yield}
+        return {"mana_yield": self.mana_yield, "essence_yield": self.essence_yield}
 
     def take_damage(self, amount):
         self.health -= amount
