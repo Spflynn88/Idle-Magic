@@ -4,6 +4,12 @@ from settings import *
 from sys import exit
 from entities import *
 
+from resources import ResourceManager, PopulationManager
+from monster import MonsterManager
+from ui import UIManager
+#from spells import SpellManager
+#from utils import load_image, load_sound
+
 # Initialize Pygame
 pygame.init()
 pygame.mixer.init()
@@ -17,30 +23,63 @@ class Game:
         self.clock = pygame.time.Clock()
         self.dt = 0
 
-        self.sprites = {}  # General sprites dict by file name
-
         # Sprite Groups
-        self.all_sprites = pygame.sprite.Group()
+        self.g_all_sprites = pygame.sprite.Group()
+
+        # Image groups
+        self.images_monsters = {}
+        self.images_ui = {}
+        self.images_other = {}
+
 
         # User Events
+        # -> Resource Gain
+        self.event_resource_gain = pygame.USEREVENT + 1
+        pygame.time.set_timer(self.event_resource_gain, RESOURCE_GAIN_TIME)
 
         # Start Up
         self.import_assets()
+
+        # Create game classes and give them needed assets
+        self.resource_mngr = ResourceManager()
+        self.pop_mngr = PopulationManager()
+        self.ui_mngr = UIManager(self.images_ui)
+        self.monster_mngr = MonsterManager()
+
         self.setup()
 
     def import_assets(self):
+        # FIXME - we need to sperate out all of the images and hand them to the correct manager
+        # this can probably move to utils also
         for filename in listdir(SPRITE_FOLDER):
             if filename.endswith('.png'):
-                sprite_name = os.path.splitext(filename)[0]
-                sprite_image = pygame.image.load(os.path.join(SPRITE_FOLDER, filename)).convert_alpha()
-                self.sprites[sprite_name] = sprite_image
+                image_name = os.path.splitext(filename)[0]
+                image = pygame.image.load(os.path.join(SPRITE_FOLDER, filename)).convert_alpha()
+
+                # Seperate out monster images
+                if image_name[:3] == 'mon':
+                    self.images_monsters[image_name] = image
+                # UI images
+                elif image_name[:3] == 'ui_':
+                    self.images_ui[image_name] = image
+
+                # Catch all else
+                else:
+                    self.images_other[image_name] = image
+
 
     def setup(self):
-        pass
+        # This takes the MONSTER_CONFIGs and replaces the image name with the actual image.
+        # FIXME Move this to utils.py
+        for monster_name, config in MONSTER_CONFIGS.items():
+            config["image"] = self.images_monsters[config.get("image")]
+
+        self.monster_mngr.add_monster("Mana_Imp", (25, 25))
 
     def update(self):
-        for sprite in self.all_sprites:
-            sprite.update()
+        pass
+
+    # Button functions
 
     def run(self) -> None:  # My need to change this later, part of a new code clarity initiate
 
@@ -50,6 +89,9 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
+                if event.type == self.event_resource_gain:
+                    # Gain resources here
+                    pass
 
 
             # Game logic
@@ -58,7 +100,11 @@ class Game:
             # Render
             # Clear the screen
             self.display_surface.fill((0, 0, 0))
-            self.all_sprites.draw(self.display_surface)
+
+            # All Managers draw their sprites
+            self.ui_mngr.render(self.display_surface)
+            self.monster_mngr.render(self.display_surface)
+
 
             pygame.display.update()
 
