@@ -1,0 +1,5 @@
+gather resources event trigger updates the amount of income thats going to happen on the
+next update tick. This way all updates still happen together and the trigger isn't a
+seperate update type thing.
+
+I'm making a Resource class and over load __add__ so they can be added together

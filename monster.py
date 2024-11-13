@@ -1,11 +1,13 @@
 import pygame
 from pygame.sprite import Sprite
 from settings import MONSTER_CONFIGS
+from resources import Resources
 
 
 class MonsterManager:
     def __init__(self):
         self.monster_sprites = pygame.sprite.Group()  # Sprite group for all monsters
+        self.resource_yield = Resources()
 
     def add_monster(self, name, pos):
         # Create a new Monster and add to the lists/groups
@@ -17,15 +19,11 @@ class MonsterManager:
         Monster(name, pos, self.monster_sprites, config)
 
     def calc_resource_yield(self):
-        _mana_yield = 0
-        _essence_yield = 0
-        _gold_yield = 0
+        mon_yield = Resources()
         for monster in self.monster_sprites:
-            mon_yield = monster.gather_resources()
-            _mana_yield += mon_yield["mana_yield"]
-            _essence_yield += mon_yield["essence_yield"]
+            mon_yield += monster.gather_resources()
 
-        return _mana_yield, _essence_yield, _gold_yield
+        return mon_yield
 
             # FIXME monsters need setters and getters for all propeties
 
@@ -45,16 +43,18 @@ class Monster(Sprite):
         # Assign monster stats from config
         self.name = name
         self.health = config["health"]
+        self.health_cur = self.health
         self.attack = config["attack"]
         self.mana_yield = config["mana_yield"]
         self.essence_yield = config["essence_yield"]
+        self.gold_yield = 0
 
         # Position and sprite setup
         self.image = config["image"]
         self.rect = self.image.get_rect(topleft=pos)
 
     def gather_resources(self):
-        return {"mana_yield": self.mana_yield, "essence_yield": self.essence_yield}
+        return Resources(self.mana_yield, self.essence_yield, self.gold_yield)
 
     def take_damage(self, amount):
         self.health -= amount

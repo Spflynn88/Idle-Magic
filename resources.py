@@ -4,6 +4,27 @@ from settings import *
 
 # PopulationManager keeps track of the population numbers and gives permission to summon
 # List of individual monsters and their actions will be managed by the MonsterManager
+class Resources:
+    def __init__(self, mana=0, essence=0, gold=0):
+        self.mana = mana
+        self.essence = essence
+        self.gold = gold
+
+    def __repr__(self):
+        return f"Resources(mana={self.mana}, essence={self.essence}, gold={self.gold})"
+
+    def __add__(self, other):
+        if not isinstance(other, Resources):
+            return NotImplemented
+
+        return Resources(
+            self.mana + other.mana,
+            self.essence + other.essence,
+            self.gold + other.gold
+
+        )
+
+
 class PopulationManager:
     def __init__(self):
         self._pop_max = STRT_POP_MAX
@@ -79,5 +100,5 @@ class ResourceManager:
         self._mana += t_value[0]
         self._essence += t_value[1]
 
-        return self._mana, self._essence, 0 # ) is for gold yeild, not yet decided on
+        #return self._mana, self._essence, 0 # ) is for gold yeild, not yet decided on
 

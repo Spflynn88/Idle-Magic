@@ -22,15 +22,12 @@ class UIManager:
     def update(self, t_resource_count):
         # called from Game
         # self.healthbar.update() <- example
-        self.resource_panel.update(*t_resource_count) # FIXME - proper values
-
+        self.resource_panel.update(t_resource_count) # FIXME - proper values
 
     def render(self, display_surface):
         # FIXME This is a stretch but the UI should only update - see performance notes
         # if all the ui is in the sprite group then just draw that sprite group for now i guess
         self.g_ui_elements.draw(display_surface)
-
-
 
 
 class UIButton(Sprite):
@@ -67,15 +64,14 @@ class ResourcesPanel(Sprite):
         self.text_pos = (88, 26)
         self.text_surf = self.font.render(self.text, True, self.color)
 
-    def update(self, t_mana, t_essence, t_gold):
+    def update(self, t_resources):
         # Wipe Surface
         self.image = self.image_base.copy()
 
         # Update Surface
-        self.text = f"{t_mana:<32}{t_essence}" # Update the text
+        self.text = f"{t_resources.mana:<32}{t_resources.essence}" # Update the text
         self.text_surf = self.font.render(self.text, True, self.color) # Update the text surface
         self.image.blit(self.text_surf, self.text_pos)
-
 
     def render(self):
         pass

@@ -4,7 +4,7 @@ from settings import *
 from sys import exit
 from entities import *
 
-from resources import ResourceManager, PopulationManager
+from resources import ResourceManager, PopulationManager, Resources
 from monster import MonsterManager
 from ui import UIManager
 #from spells import SpellManager
@@ -22,6 +22,12 @@ class Game:
         pygame.display.set_caption('Idle Magic')
         self.clock = pygame.time.Clock()
         self.dt = 0
+
+        # Vars
+        self.resource_income = 0 # The amount of resources to be added on update() DEBUG? changed to a class
+
+        self.resources = Resources() # This is where Game keeps track of the total resources
+        self.resource_income = Resources() # This is the resources that are going to be added on update
 
         # Sprite Groups
         self.g_all_sprites = pygame.sprite.Group()
@@ -67,37 +73,46 @@ class Game:
                 else:
                     self.images_other[image_name] = image
 
-
     def setup(self):
-        # This takes the MONSTER_CONFIGs and replaces the image name with the actual image.
+        # This takes the MONSTER_CONFIG dict and replaces the image name with the actual image.
         # FIXME Move this to utils.py
         for monster_name, config in MONSTER_CONFIGS.items():
             config["image"] = self.images_monsters[config.get("image")]
 
         self.monster_mngr.add_monster("Mana_Imp", (25, 25))
 
-    def update(self, t_mon_yield):
+    def update(self):
         # FIXME - Game needs to go get all the info from it's managers and then parcel it out.
-        resource_count = self.resource_mngr.update(t_mon_yield)
-        self.ui_mngr.update(resource_count)
+        self.resources += self.resource_income
+        self.resource_income = Resources() # Reset income
+
+        # Update UI
+        self.ui_mngr.update(self.resources)
+
+    def gather_resources(self):
+        pass
+
+
+
 
     # Button functions
 
-    def run(self) -> None:  # My need to change this later, part of a new code clarity initiate
+    def run(self) -> None:  # My need to change this later, part of a new code clarity
 
         while True:
-            mon_yield = (0, 0, 0) # FIXME this is not right rework
             # Event Loop
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
                 if event.type == self.event_resource_gain:
-                    mon_yield = self.monster_mngr.calc_resource_yield()
+                    # Resources can come from multiple places so this needs to be +=
+                    print (f"DB Resource gain event trigger {self.monster_mngr.calc_resource_yield()}") # DEBUG
+                    self.resource_income += self.monster_mngr.calc_resource_yield()
 
 
             # Game logic
-            self.update(mon_yield)
+            self.update()
 
             # Render
             # Clear the screen
