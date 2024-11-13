@@ -26,7 +26,8 @@ class Game:
         # Vars
         self.resource_income = 0 # The amount of resources to be added on update() DEBUG? changed to a class
 
-        self.resources = Resources() # This is where Game keeps track of the total resources
+        # FIXME - Game doesn't hold the resources the manager does
+        # DEL self.resources = Resources() # This is where Game keeps track of the total resources
         self.resource_income = Resources() # This is the resources that are going to be added on update
 
         # Sprite Groups
@@ -79,23 +80,18 @@ class Game:
         for monster_name, config in MONSTER_CONFIGS.items():
             config["image"] = self.images_monsters[config.get("image")]
 
+        # DEBUG - Test monster
         self.monster_mngr.add_monster("Mana_Imp", (25, 25))
 
     def update(self):
         # FIXME - Game needs to go get all the info from it's managers and then parcel it out.
-        self.resources += self.resource_income
+
+        self.resource_mngr.add_resources(self.resource_income) # Add income
         self.resource_income = Resources() # Reset income
 
         # Update UI
-        self.ui_mngr.update(self.resources)
+        self.ui_mngr.update(self.resource_mngr.resources)
 
-    def gather_resources(self):
-        pass
-
-
-
-
-    # Button functions
 
     def run(self) -> None:  # My need to change this later, part of a new code clarity
 
@@ -106,10 +102,8 @@ class Game:
                     pygame.quit()
                     exit()
                 if event.type == self.event_resource_gain:
-                    # Resources can come from multiple places so this needs to be +=
                     print (f"DB Resource gain event trigger {self.monster_mngr.calc_resource_yield()}") # DEBUG
                     self.resource_income += self.monster_mngr.calc_resource_yield()
-
 
             # Game logic
             self.update()
@@ -120,8 +114,8 @@ class Game:
 
             # All Managers draw their sprites
             self.ui_mngr.render(self.display_surface)
-            self.monster_mngr.render(self.display_surface)
-
+            # FIXME - MM no longer renders, that's the UI's job so get that info to the UI
+            # self.monster_mngr.render(self.display_surface)
 
             pygame.display.update()
 

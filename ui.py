@@ -20,13 +20,12 @@ class UIManager:
         self.resource_panel = ResourcesPanel(UI_RESOURCE_BAR_POS, self.ui_images["ui_resource_bar"], self.g_ui_elements)
 
     def update(self, t_resource_count):
-        # called from Game
+        # called from Game, takes Resource()
         # self.healthbar.update() <- example
         self.resource_panel.update(t_resource_count) # FIXME - proper values
 
     def render(self, display_surface):
-        # FIXME This is a stretch but the UI should only update - see performance notes
-        # if all the ui is in the sprite group then just draw that sprite group for now i guess
+        # FIXME UI needs to render more than just itself, the monster for example
         self.g_ui_elements.draw(display_surface)
 
 
@@ -53,6 +52,7 @@ class UIButton(Sprite):
 
 class ResourcesPanel(Sprite):
     def __init__(self, pos, t_image, group):
+        # FIXME - Make a UI element parent class? Could include font but maybe not size?
         super().__init__(group)
         self.image = t_image
         self.image_base = t_image
@@ -65,6 +65,8 @@ class ResourcesPanel(Sprite):
         self.text_surf = self.font.render(self.text, True, self.color)
 
     def update(self, t_resources):
+        # FIXME - some slop here, update and render need to be discussed
+        # Takes Resource()
         # Wipe Surface
         self.image = self.image_base.copy()
 
@@ -75,5 +77,5 @@ class ResourcesPanel(Sprite):
 
     def render(self):
         pass
-    # Still don't need render. Sprite draw works fine, I'm just blit-ing the text onto its own image
+
 

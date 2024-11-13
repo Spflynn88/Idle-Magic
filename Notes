@@ -3,3 +3,5 @@ next update tick. This way all updates still happen together and the trigger isn
 seperate update type thing.
 
 I'm making a Resource class and over load __add__ so they can be added together
+
+Game currently keeps track of resource income, should that go to manager?

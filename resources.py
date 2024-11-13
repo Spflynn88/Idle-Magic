@@ -56,49 +56,55 @@ class PopulationManager:
 
 class ResourceManager:
     def __init__(self):
-        self._mana = 0
-        self._mana_max = 100
-        self._essence = 0
-        self._essence_max = 100
+        # Initialize resources with defaults
+        self.resources = Resources(5, 5, 5)
+        self.mana_max = 100
+        self.essence_max = 100
+        self.gold_max = 100
+
+    def __repr__(self):
+        return (f"ResourceManager(resources={self.resources}, mana_max={self.mana_max}, essence_max={self.essence_max}, "
+                f"gold_max={self.gold_max})")
 
     @property
     def mana(self):
-        return self._mana
+        return self.resources.mana
 
     @mana.setter
     def mana(self, value):
-        self._mana = min(value, self._mana_max)  # Ensure mana doesn't exceed max
+        # Ensure mana is within allowed bounds
+        self.resources.mana = max(0, min(value, self.mana_max))
 
     @property
     def essence(self):
-        return self._essence
+        return self.resources.essence
 
     @essence.setter
     def essence(self, value):
-        self._essence = min(value, self._essence_max)  # Ensure essence doesn't exceed max
+        # Ensure essence is within allowed bounds
+        self.resources.essence = max(0, min(value, self.essence_max))
 
     @property
-    def mana_max(self):
-        return self._mana_max
+    def gold(self):
+        return self.resources.gold
 
-    @mana_max.setter
-    def mana_max(self, value):
-        if value >= 0:
-            self._mana_max = value
+    @gold.setter
+    def gold(self, value):
+        # Ensure gold is within allowed bounds
+        self.resources.gold = max(0, min(value, self.gold_max))
 
     @property
-    def essence_max(self):
-        return self._essence_max
+    def get_resources(self):
+        return self.resources
 
-    @essence_max.setter
-    def essence_max(self, value):
-        if value >= 0:
-            self._essence_max = value
 
-    def update(self, t_value):
-        # This takes in a tuple for now that is all of the resources listed in order: Mana, Essence, Gold
-        self._mana += t_value[0]
-        self._essence += t_value[1]
+    def update(self):
+        # Placeholder for future update logic
+        pass
 
-        #return self._mana, self._essence, 0 # ) is for gold yeild, not yet decided on
+    def add_resources(self, new_resources):
+        # Add new resources while ensuring they do not exceed maximums
+        self.mana = self.resources.mana + new_resources.mana
+        self.essence = self.resources.essence + new_resources.essence
+        self.gold = self.resources.gold + new_resources.gold
 
