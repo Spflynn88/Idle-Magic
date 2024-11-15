@@ -22,6 +22,7 @@ class UIManager:
                                             self._ui_images["ui_monster_roster"],
                                             self._ui_images["ui_mon_frame"],
                                             self.g_ui_elements)
+        self.summon_panel = SummonPanel(SUMMON_PANE_START_POS, self._ui_images, self.g_ui_elements)
 
     def update(self, t_resource_count) -> None:
         # called from Game, takes Resource()
@@ -39,11 +40,13 @@ class UIManager:
 
 class UIButton(Sprite):
     # The UI element that makes the button will pass it the needed action function
-    def __init__(self, pos, t_image, group, action=None):
+    # FIXME - make a defualt pic for easy protoing
+    # FIXME - needs more properties to make it flexible (*args, **kwargs))
+    def __init__(self, pos, t_image, group, callback=None):
         super().__init__(group)
         self.image = t_image
         self.rect = self.image.get_rect(topleft=pos)
-        self.action = action
+        self.callback = callback
 
     def update(self):
         pass
@@ -51,11 +54,15 @@ class UIButton(Sprite):
     def on_hover(self):
         pass
 
-    def handel_event(self, event):
-        pass
+    def handel_event(self, t_event):
+        # on_click calls the callback, but this should still be here
+        if t_event.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(t_event.pos):
+                self.on_click(t_event)
 
-    def on_click(self, event):
-        pass
+    def on_click(self, t_event):
+        print(f"Button event: {t_event}")
+        self.callback()
 
 
 class ResourcesPanel(Sprite):
@@ -119,4 +126,35 @@ class MonsterRoster(Sprite):
             self.image.blit(self.frame, (monster.rect.x - self._frame_offset, monster.rect.y - self._frame_offset))
 
 
+class SummonPanel(Sprite):
+    # I'm not sure what this wants for inheritence yet. This might be where the functions that the buttons callback go?
+    # That feels right?
+    # FIXME - maybe only hand it the images it needs
+    def __init__(self, pos, t_ui_images, t_group):
+        super().__init__(t_group)
+        self.image = pygame.Surface((66 * 4, 66 * 3))
+        self.rect = self.image.get_frect(topleft=pos)
 
+        self.image.fill('gray')
+
+        self.g_buttons = pygame.sprite.Group()
+        self.ui_images = t_ui_images
+
+        # Define buttons
+        self.but_sum_manaImp = None
+
+        self.build_buttons()
+
+    def build_buttons(self):
+        self.but_sum_manaImp = UIButton((0,0), self.ui_images["ui_but_default"], self.g_buttons, self.summon)
+        pass
+
+    def update(self):
+        pass
+
+    def render(self):
+        self.g_buttons.draw()
+
+    def summon(self, creature):
+        # The buttons trigger this using the 'creature' argument to summon the correct one.
+        pass

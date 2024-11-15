@@ -17,18 +17,24 @@ STRT_POP_MAX = 10
 STRT_MANA_CAP = 100
 STRT_ESS_CAP = 100
 
+# UI Loaction Data
+
+
+STD_MARGIN_Y = int(SCREEN_HEIGHT * .035)
+STD_MARGIN_X = int(SCREEN_WIDTH * .06)
+
+UI_RESOURCE_BAR_POS = (SCREEN_WIDTH // 2, 24) # Resource Bar
+UI_MON_ROSTER_POS = (16, 24) # Monster Roster Panel
+
 BUILD_GRID_COLS = 20
 BUILD_GRID_ROWS = 20
 BUILD_GRID_TILE = 32
-BUILD_GRID_START_POS = (350, 150)
+BUILD_GRID_START_POS = (350, UI_RESOURCE_BAR_POS[1] + STD_MARGIN_Y + 64) # FIXME - this is a good idea but needs to be where i can get the info
 
-
-# UI Loaction Data
-# FIXME - I need to figure this out better, maybe base objects of each other
-UI_RESOURCE_BAR_POS: tuple[int, int] = (SCREEN_WIDTH // 2, 24) # Resource Bar
-
-UI_MON_ROSTER_POS: tuple[int, int] = (16, 24) # Monster Roster Panel
-
+SUMMON_PANE_START_POS = (
+    BUILD_GRID_START_POS[0],
+    BUILD_GRID_START_POS[1] + (BUILD_GRID_ROWS * BUILD_GRID_TILE) + STD_MARGIN_Y
+)
 
 
 MON_ICON_SIZE = 128  # They are square so only 1 digit needed
