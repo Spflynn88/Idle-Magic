@@ -68,45 +68,35 @@ class PopulationManager:
 class ResourceManager:
     def __init__(self):
         # Initialize resources with defaults
-        self.resources = Resources(5, 5, 5)
+        self.resources_cur = Resources(5, 5, 5)
         self.mana_max = 100
         self.essence_max = 100
-        self.gold_max = 100
 
-    def __repr__(self):
-        return (f"ResourceManager(resources={self.resources}, mana_max={self.mana_max}, essence_max={self.essence_max}, "
-                f"gold_max={self.gold_max})")
+
+    def __repr__(self): # FIXME
+        return (f"ResourceManager(resources={self.resources_cur}, mana_max={self.mana_max}, essence_max={self.essence_max})")
 
     @property
     def mana(self):
-        return self.resources.mana
+        return self.resources_cur.mana
 
     @mana.setter
     def mana(self, value):
         # Ensure mana is within allowed bounds
-        self.resources.mana = max(0, min(value, self.mana_max))
+        self.resources_cur.mana = max(0, min(value, self.mana_max))
 
     @property
     def essence(self):
-        return self.resources.essence
+        return self.resources_cur.essence
 
     @essence.setter
     def essence(self, value):
         # Ensure essence is within allowed bounds
-        self.resources.essence = max(0, min(value, self.essence_max))
-
-    @property
-    def gold(self):
-        return self.resources.gold
-
-    @gold.setter
-    def gold(self, value):
-        # Ensure gold is within allowed bounds
-        self.resources.gold = max(0, min(value, self.gold_max))
+        self.resources_cur.essence = max(0, min(value, self.essence_max))
 
     @property
     def get_resources(self):
-        return self.resources
+        return self.resources_cur
 
     def update(self):
         # Placeholder for future update logic
@@ -114,7 +104,6 @@ class ResourceManager:
 
     def add_resources(self, new_resources):
         # Add new resources while ensuring they do not exceed maximums
-        self.mana = self.resources.mana + new_resources.mana
-        self.essence = self.resources.essence + new_resources.essence
-        self.gold = self.resources.gold + new_resources.gold
+        self.mana = self.resources_cur.mana + new_resources.mana
+        self.essence = self.resources_cur.essence + new_resources.essence
 

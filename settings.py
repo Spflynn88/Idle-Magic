@@ -10,14 +10,18 @@ SCREEN_HEIGHT = 1024 # 800
 
 SPRITE_FOLDER = os.path.join('.', 'sprites')
 
-TILE_SIZE = 112
-
-RESOURCE_GAIN_TIME = 1000 # In ms for timer
+RESOURCE_GAIN_TIME = 5000 # In ms for timer
 
 # Start Vars
 STRT_POP_MAX = 10
 STRT_MANA_CAP = 100
 STRT_ESS_CAP = 100
+
+BUILD_GRID_COLS = 20
+BUILD_GRID_ROWS = 20
+BUILD_GRID_TILE = 32
+BUILD_GRID_START_POS = (350, 150)
+
 
 # UI Loaction Data
 # FIXME - I need to figure this out better, maybe base objects of each other

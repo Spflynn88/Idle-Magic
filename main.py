@@ -2,7 +2,7 @@ import pygame.sprite
 
 from settings import *
 from sys import exit
-from entities import *
+from building import *
 
 from resources import ResourceManager, PopulationManager, Resources
 from monster import MonsterManager
@@ -51,6 +51,7 @@ class Game:
         self.pop_mngr = PopulationManager()
         self.ui_mngr = UIManager(self.images_ui)
         self.monster_mngr = MonsterManager()
+        self.building_mngr = BuildingManager()
 
         self.setup()
 
@@ -90,7 +91,7 @@ class Game:
         self.resource_income = Resources() # Reset income
 
         # Update UI by handing the Resources
-        self.ui_mngr.update(self.resource_mngr.resources)
+        self.ui_mngr.update(self.resource_mngr.resources_cur)
 
     def run(self) -> None:  # My need to change this later, part of a new code clarity
         while True:
@@ -111,9 +112,9 @@ class Game:
             self.display_surface.fill((0, 0, 0))
 
             # All Managers draw their sprites XXX NO UI does it, not everyone.
-            # FIXME - MM no longer renders, that's the UI's job so get that info to the UI
 
             self.ui_mngr.render(self.display_surface, self.monster_mngr.monster_sprites)
+            self.building_mngr.render(self.display_surface)
 
             pygame.display.update()
 

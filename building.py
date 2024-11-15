@@ -1,0 +1,56 @@
+from settings import *
+
+
+class BuildingManager:
+    # The building manager will display the building grid and manage it.
+    def __init__(self):
+        self.g_building_sprites = pygame.sprite.Group()
+        self.building_grid = BuildingGrid(self.g_building_sprites)
+
+    def build_grid(self):
+        pass
+
+    def update(self):
+        pass
+
+    def render(self, t_display_surface):
+        self.building_grid.render()
+
+        self.g_building_sprites.draw(t_display_surface)
+
+
+class BuildingGrid(pygame.sprite.Sprite):
+    def __init__(self, t_group):
+        super().__init__(t_group)
+        self.grid_rows = BUILD_GRID_ROWS
+        self.grid_cols = BUILD_GRID_COLS
+        self.tile_size = BUILD_GRID_TILE
+
+        self.line_width = 2
+        self.line_color = 'gray'
+
+        self.image = pygame.Surface((self.grid_cols * self.tile_size + self.line_width,
+                                     self.grid_rows * self.tile_size + self.line_width))
+        self.rect = self.image.get_frect(topleft=BUILD_GRID_START_POS)
+        self.image.fill('green')
+
+        self.image.set_colorkey('green')
+        self.image.set_alpha(255 // 2)
+
+    def render(self):
+        self.image.fill('green')
+        pos_y = 0
+        pos_x = 0
+        for row in range(self.grid_rows + 1):
+            pygame.draw.line(self.image, self.line_color, (0, pos_y), (self.image.get_width(), pos_y))
+            pos_y += self.tile_size
+        for col in range(self.grid_cols + 1):
+            pygame.draw.line(self.image, self.line_color, (pos_x, 0), (pos_x, self.image.get_height()))
+            pos_x += self.tile_size
+
+class Building:
+    # Individual buildings
+    pass
+
+
+
