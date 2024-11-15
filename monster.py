@@ -1,6 +1,6 @@
 import pygame
 from pygame.sprite import Sprite
-from settings import MONSTER_CONFIGS
+from settings import *
 from resources import Resources
 
 
@@ -8,9 +8,11 @@ class MonsterManager:
     def __init__(self):
         self._monster_sprites = pygame.sprite.Group()  # Sprite group for all monsters
 
-    def add_monster(self, name, pos):
+    def add_monster(self, name):
         # Create a new Monster and add to the lists/groups
         # Load configuration based on monster name
+        pos = (-100, -100)
+
         config = MONSTER_CONFIGS.get(name)
         if config is None:
             raise ValueError(f"No configuration found for monster name: {name}")
@@ -32,7 +34,6 @@ class MonsterManager:
         return self._monster_sprites
 
 
-
 class Monster(Sprite):
     # FIXME monsters need setters and getters for all propeties
     def __init__(self, name, pos, group, config):
@@ -44,13 +45,17 @@ class Monster(Sprite):
         self.health = config["health"]
         self.health_cur = self.health
         self.attack = config["attack"]
+
+        # Resources
         self.mana_yield = config["mana_yield"]
         self.essence_yield = config["essence_yield"]
         self.gold_yield = 0
 
+        # Abilities
+
         # Position and sprite setup
         self.image = config["image"]
-        self.rect = self.image.get_rect(topleft=pos)
+        self.rect = self.image.get_frect(topleft=pos)
 
     def gather_resources(self):
         return Resources(self.mana_yield, self.essence_yield, self.gold_yield)

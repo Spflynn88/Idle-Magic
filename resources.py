@@ -4,14 +4,25 @@ from settings import *
 
 # PopulationManager keeps track of the population numbers and gives permission to summon
 # List of individual monsters and their actions will be managed by the MonsterManager
+
+
 class Resources:
-    def __init__(self, mana=0, essence=0, gold=0):
+    def __init__(self, mana=0, essence=0, veil_pearls=0, gems_raw=0):
         self.mana = mana
         self.essence = essence
-        self.gold = gold
+        self.vpearls = veil_pearls
+        self.gems_raw = gems_raw
+        self.gems_refined = {
+            "arcane": 0,
+            "void": 0,
+            "flame": 0,
+            "aqua": 0,
+            "wild": 0,
+            "stone": 0
+        }
 
     def __repr__(self):
-        return f"Resources(mana={self.mana}, essence={self.essence}, gold={self.gold})"
+        return f"Resources(mana={self.mana}, essence={self.essence}, vpearls={self.vpearls})"
 
     def __add__(self, other):
         if not isinstance(other, Resources):
@@ -20,7 +31,7 @@ class Resources:
         return Resources(
             self.mana + other.mana,
             self.essence + other.essence,
-            self.gold + other.gold
+            self.vpearls + other.vpearls
 
         )
 
@@ -96,7 +107,6 @@ class ResourceManager:
     @property
     def get_resources(self):
         return self.resources
-
 
     def update(self):
         # Placeholder for future update logic

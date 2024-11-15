@@ -1,10 +1,12 @@
+from typing import Tuple
+
 import pygame
 import os.path
 from os import listdir
 import random
 
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 800
+SCREEN_WIDTH = 1792 # 1280
+SCREEN_HEIGHT = 1024 # 800
 
 SPRITE_FOLDER = os.path.join('.', 'sprites')
 
@@ -19,7 +21,14 @@ STRT_ESS_CAP = 100
 
 # UI Loaction Data
 # FIXME - I need to figure this out better, maybe base objects of each other
-UI_RESOURCE_BAR_POS = (SCREEN_WIDTH // 2, 60)
+UI_RESOURCE_BAR_POS: tuple[int, int] = (SCREEN_WIDTH // 2, 24) # Resource Bar
+
+UI_MON_ROSTER_POS: tuple[int, int] = (16, 24) # Monster Roster Panel
+
+
+
+MON_ICON_SIZE = 128  # They are square so only 1 digit needed
+MON_ICON_OFFSET = 16  # Offset inbetween icons on the roster
 
 
 # Monsters

@@ -38,7 +38,6 @@ class Game:
         self.images_ui = {}
         self.images_other = {}
 
-
         # User Events
         # -> Resource Gain
         self.event_resource_gain = pygame.USEREVENT + 1
@@ -81,7 +80,8 @@ class Game:
             config["image"] = self.images_monsters[config.get("image")]
 
         # DEBUG - Test monster
-        self.monster_mngr.add_monster("Mana_Imp", (25, 25))
+        self.monster_mngr.add_monster("Mana_Imp")
+        self.monster_mngr.add_monster("Mana_Imp")
 
     def update(self):
         # FIXME - Game needs to go get all the info from it's managers and then parcel it out.
@@ -89,12 +89,10 @@ class Game:
         self.resource_mngr.add_resources(self.resource_income) # Add income
         self.resource_income = Resources() # Reset income
 
-        # Update UI
+        # Update UI by handing the Resources
         self.ui_mngr.update(self.resource_mngr.resources)
 
-
     def run(self) -> None:  # My need to change this later, part of a new code clarity
-
         while True:
             # Event Loop
             for event in pygame.event.get():
@@ -112,10 +110,10 @@ class Game:
             # Clear the screen
             self.display_surface.fill((0, 0, 0))
 
-            # All Managers draw their sprites
-            self.ui_mngr.render(self.display_surface)
+            # All Managers draw their sprites XXX NO UI does it, not everyone.
             # FIXME - MM no longer renders, that's the UI's job so get that info to the UI
-            # self.monster_mngr.render(self.display_surface)
+
+            self.ui_mngr.render(self.display_surface, self.monster_mngr.monster_sprites)
 
             pygame.display.update()
 
