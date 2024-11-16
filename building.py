@@ -11,7 +11,7 @@ class BuildingManager:
         pass
 
     def update(self):
-        pass
+        self.building_grid.update()
 
     def render(self, t_display_surface):
         self.building_grid.render()
@@ -29,13 +29,33 @@ class BuildingGrid(pygame.sprite.Sprite):
         self.line_width = 2
         self.line_color = 'gray'
 
+        # Create the offset from 0,0 so that the mouse_pos can figure out which tile it's over
+        self.offset_x = BUILD_GRID_START_POS[0]
+        self.offset_y = BUILD_GRID_START_POS[1]
+
+        # Create the Surface
         self.image = pygame.Surface((self.grid_cols * self.tile_size + self.line_width,
                                      self.grid_rows * self.tile_size + self.line_width))
         self.rect = self.image.get_frect(topleft=BUILD_GRID_START_POS)
-        self.image.fill('green')
 
+        # Setup color key
+        self.image.fill('green')
         self.image.set_colorkey('green')
         self.image.set_alpha(255 // 2)
+
+    def generate_grid(self):
+        pass
+
+
+    def update(self):
+        # Check if the mouse is over the grid, then find the tile id
+        if self.rect.collidepoint(mouse_pos()):
+            # Adjust the mouse_pos by the offset
+            tile_id_x = (mouse_pos()[0] - self.offset_x) // self.tile_size
+            tile_id_y = (mouse_pos()[1] - self.offset_y) // self.tile_size
+
+            # DEBUG
+            # print(f"{mouse_x}, {mouse_y} :: Tile id {tile_id_x},{tile_id_y}")
 
     def render(self):
         self.image.fill('green')
@@ -51,6 +71,8 @@ class BuildingGrid(pygame.sprite.Sprite):
 class Building:
     # Individual buildings
     pass
+
+
 
 
 

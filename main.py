@@ -43,6 +43,10 @@ class Game:
         self.event_resource_gain = pygame.USEREVENT + 1
         pygame.time.set_timer(self.event_resource_gain, RESOURCE_GAIN_TIME)
 
+        # Game States
+        # FIXME - These are not yet used.
+        self.game_states = {"building": False}
+
         # Start Up
         self.import_assets()
 
@@ -92,6 +96,7 @@ class Game:
 
         # Update UI by handing the Resources
         self.ui_mngr.update(self.resource_mngr.resources_cur)
+        self.building_mngr.update()
 
     def run(self) -> None:  # My need to change this later, part of a new code clarity
         while True:
@@ -106,6 +111,7 @@ class Game:
 
             # Game logic
             self.update()
+
 
             # Render
             # Clear the screen

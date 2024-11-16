@@ -4,6 +4,7 @@ import pygame
 import os.path
 from os import listdir
 import random
+from utils import *
 
 SCREEN_WIDTH = 1792 # 1280
 SCREEN_HEIGHT = 1024 # 800

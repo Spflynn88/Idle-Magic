@@ -31,8 +31,9 @@ class UIManager:
 
     def render(self, display_surface, t_sprites_monsters, *sprite_groups) -> None:
         # FIXME The UI elements are Sprites or surfaces, they are going to build themselves and UIMan will render them
-        # Build the UI elements
+        # Build the UI elements - They run thier render first, then the UIManager finishes by drawing from it's group
         self.monster_roster.render(t_sprites_monsters)
+        self.summon_panel.render()
 
         # Draw the UI
         self.g_ui_elements.draw(display_surface)
@@ -65,12 +66,23 @@ class UIButton(Sprite):
         self.callback()
 
 
-class ResourcesPanel(Sprite):
+class UIPanel(Sprite):
+    def __init__(self, pos, t_image, t_group):
+        super().__init__(t_group)
+        self.image = t_image
+        self.rect = self.image.get_frect(topleft=pos)
+        self.image_base = t_image
+
+        # Sprite group
+        self.g_sprites = pygame.sprite.Group
+
+
+
+class ResourcesPanel(UIPanel):
     def __init__(self, pos, t_image, group):
         # FIXME - Make a UI element parent class? Could include font but maybe not size?
-        super().__init__(group)
-        self.image = t_image
-        self.image_base = t_image
+        super().__init__(pos, t_image, group)
+
         self.rect = self.image.get_frect(midtop=pos)
 
         self.font = pygame.font.Font(None, 36)
@@ -79,14 +91,14 @@ class ResourcesPanel(Sprite):
         self.text_pos = (88, 26)
         self.text_surf = self.font.render(self.text, True, self.color)
 
-    def update(self, t_resources) -> None:
+    def update(self, t_resources):
         # FIXME - some slop here, update and render need to be discussed
         # Takes Resource()
         # Wipe Surface
         self.image = self.image_base.copy()
 
         # Update Surface
-        self.text = f"{t_resources.vpearls:<32}{t_resources.essence}" # Update the text
+        self.text = f"{t_resources.vpearls:<40}{t_resources.essence}" # Update the text
         self.text_surf = self.font.render(self.text, True, self.color) # Update the text surface
         self.image.blit(self.text_surf, self.text_pos)
 
@@ -132,7 +144,7 @@ class SummonPanel(Sprite):
     # FIXME - maybe only hand it the images it needs
     def __init__(self, pos, t_ui_images, t_group):
         super().__init__(t_group)
-        self.image = pygame.Surface((66 * 4, 66 * 3))
+        self.image = pygame.Surface((66 * 4, 66 * 3)) # FIXME - Generate location not hard code
         self.rect = self.image.get_frect(topleft=pos)
 
         self.image.fill('gray')
@@ -147,13 +159,13 @@ class SummonPanel(Sprite):
 
     def build_buttons(self):
         self.but_sum_manaImp = UIButton((0,0), self.ui_images["ui_but_default"], self.g_buttons, self.summon)
-        pass
+
 
     def update(self):
         pass
 
     def render(self):
-        self.g_buttons.draw()
+        self.g_buttons.draw(self.image)
 
     def summon(self, creature):
         # The buttons trigger this using the 'creature' argument to summon the correct one.
