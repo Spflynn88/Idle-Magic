@@ -19,18 +19,16 @@ STRT_MANA_CAP = 100
 STRT_ESS_CAP = 100
 
 # UI Loaction Data
-
-
 STD_MARGIN_Y = int(SCREEN_HEIGHT * .035)
 STD_MARGIN_X = int(SCREEN_WIDTH * .06)
 
-UI_RESOURCE_BAR_POS = (SCREEN_WIDTH // 2, 24) # Resource Bar
+UI_RESOURCE_BAR_POS = (SCREEN_WIDTH // 2 - 360, 24) # Resource Bar
 UI_MON_ROSTER_POS = (16, 24) # Monster Roster Panel
 
 BUILD_GRID_COLS = 20
 BUILD_GRID_ROWS = 20
 BUILD_GRID_TILE = 32
-BUILD_GRID_START_POS = (350, UI_RESOURCE_BAR_POS[1] + STD_MARGIN_Y + 64) # FIXME - this is a good idea but needs to be where i can get the info
+BUILD_GRID_START_POS = (350, 350) # FIXME All of the ui is getting redone
 
 SUMMON_PANE_START_POS = (
     BUILD_GRID_START_POS[0],

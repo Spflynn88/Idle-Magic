@@ -2,10 +2,10 @@ import pygame
 from pygame.sprite import Sprite
 from settings import *
 
-#FIXME - give the UI is own surface, then use colorKey to fix transperency
 ''' The UI will be  divided into different elements, each with there own class
     then the UI manager will create and manage them
-    Each element will have an update and render method.
+    Each Panel will be a surface which uses sprite groups to draw to itself. Then UIM
+    will draw the panels.
     
     These subclasses will talk ONLY to the UI which will talk ONLY to Game.
     '''
@@ -13,30 +13,29 @@ from settings import *
 
 class UIManager:
     def __init__(self, t_ui_images):
-        self.g_ui_elements = pygame.sprite.Group()
-        self._ui_images = t_ui_images
+        self.g_ui_elements = pygame.sprite.Group() # FIXME might not need a sprite group anymore
+        self.g_ui_panels = [] # List of all the panels, replaces the sprite group
+        self._ui_images = t_ui_images # List of the images needed for the UI
 
         # UI creates all of its elements
-        self.resource_panel = ResourcesPanel(UI_RESOURCE_BAR_POS, self._ui_images["ui_resource_bar"], self.g_ui_elements)
-        self.monster_roster = MonsterRoster(UI_MON_ROSTER_POS,
-                                            self._ui_images["ui_monster_roster"],
-                                            self._ui_images["ui_mon_frame"],
-                                            self.g_ui_elements)
-        self.summon_panel = SummonPanel(SUMMON_PANE_START_POS, self._ui_images, self.g_ui_elements)
+        # sudo
+        # create panel
+        # add panel to g_ui_panels
 
     def update(self, t_resource_count) -> None:
+        # FIXME - This is going to work just like render() UIM calls the update on all it's children
         # called from Game, takes Resource()
-        # self.healthbar.update() <- example
-        self.resource_panel.update(t_resource_count) # FIXME - proper values
+        pass
 
     def render(self, display_surface, t_sprites_monsters, *sprite_groups) -> None:
-        # FIXME The UI elements are Sprites or surfaces, they are going to build themselves and UIMan will render them
-        # Build the UI elements - They run thier render first, then the UIManager finishes by drawing from it's group
-        self.monster_roster.render(t_sprites_monsters)
-        self.summon_panel.render()
+        # Build the UI elements - They run their render first, then the UIManager finishes by drawing from it's group
 
+        # Prep the panels
+        for element in self.g_ui_panels:
+            element.render()
         # Draw the UI
-        self.g_ui_elements.draw(display_surface)
+        for element in self.g_ui_panels:
+            display_surface.blit(element.uip_display_surface, element.pos)
 
 
 class UIButton(Sprite):
@@ -66,107 +65,27 @@ class UIButton(Sprite):
         self.callback()
 
 
-class UIPanel(Sprite):
-    def __init__(self, pos, t_image, t_group):
-        super().__init__(t_group)
-        self.image = t_image
-        self.rect = self.image.get_frect(topleft=pos)
-        self.image_base = t_image
+class UIPanel:
+    def __init__(self, pos, t_image):
+        # t_group is still used, but the group will not be a sprite group
+        self.image = t_image       # The panel image - Not a sprite
+        self.image_base = t_image  # Back up to replace when rendering
+        self.uip_display_surface = pygame.Surface((self.image.width, self.image.height))
 
-        # Sprite group
-        self.g_sprites = pygame.sprite.Group
+        self.pos = pos
 
+        # Sprite group to hold the sprites that make up the panel elements
+        self.g_sprites = pygame.sprite.Group()
 
+    def build(self):
+        # Create all the elements needed for the panel
+        pass
 
-class ResourcesPanel(UIPanel):
-    def __init__(self, pos, t_image, group):
-        # FIXME - Make a UI element parent class? Could include font but maybe not size?
-        super().__init__(pos, t_image, group)
-
-        self.rect = self.image.get_frect(midtop=pos)
-
-        self.font = pygame.font.Font(None, 36)
-        self.text = "Start"
-        self.color = (0,0,0)
-        self.text_pos = (88, 26)
-        self.text_surf = self.font.render(self.text, True, self.color)
-
-    def update(self, t_resources):
-        # FIXME - some slop here, update and render need to be discussed
-        # Takes Resource()
-        # Wipe Surface
+    def render(self):
+        # Clear and blit the bg image
         self.image = self.image_base.copy()
+        self.uip_display_surface.blit(self.image, (0,0))
 
-        # Update Surface
-        self.text = f"{t_resources.vpearls:<40}{t_resources.essence}" # Update the text
-        self.text_surf = self.font.render(self.text, True, self.color) # Update the text surface
-        self.image.blit(self.text_surf, self.text_pos)
+        # Draw the rest of the sprites
+        self.g_sprites.draw(self.uip_display_surface)
 
-    def render(self):
-        pass
-
-
-class MonsterRoster(Sprite):
-    def __init__(self, pos, t_image, t_frame, group):
-        super().__init__(group)
-        self.image = t_image
-        self.image_default = t_image
-        self.rect = self.image.get_frect(topleft=pos)
-
-        self.frame = t_frame
-
-        # FIXME - change all this to be dynamic
-        # Panel layout
-        self._top_margin = int(.06 * self.rect.height)   # This is distance from the top we want to start placing things
-        self._icon_margin = int(.06 * self.rect.height)  # Distance between Monsters
-        # FIXME - change the frame to have a % border size to calculate the offset
-        self._frame_offset = 18 # X and Y offset for the fame
-
-    def build_monster_frames(self):
-        # IDK about this yet.
-        pass
-
-    def update(self):
-        pass
-
-    def render(self, t_sprites_monsters):
-        for count, monster in enumerate(t_sprites_monsters):
-            monster.rect.x = self.rect.width // 2 - monster.rect.width // 2
-            monster.rect.y = self._top_margin + (self._icon_margin + monster.rect.height) * count
-
-            self.image.blit(monster.image, monster.rect)
-            self.image.blit(self.frame, (monster.rect.x - self._frame_offset, monster.rect.y - self._frame_offset))
-
-
-class SummonPanel(Sprite):
-    # I'm not sure what this wants for inheritence yet. This might be where the functions that the buttons callback go?
-    # That feels right?
-    # FIXME - maybe only hand it the images it needs
-    def __init__(self, pos, t_ui_images, t_group):
-        super().__init__(t_group)
-        self.image = pygame.Surface((66 * 4, 66 * 3)) # FIXME - Generate location not hard code
-        self.rect = self.image.get_frect(topleft=pos)
-
-        self.image.fill('gray')
-
-        self.g_buttons = pygame.sprite.Group()
-        self.ui_images = t_ui_images
-
-        # Define buttons
-        self.but_sum_manaImp = None
-
-        self.build_buttons()
-
-    def build_buttons(self):
-        self.but_sum_manaImp = UIButton((0,0), self.ui_images["ui_but_default"], self.g_buttons, self.summon)
-
-
-    def update(self):
-        pass
-
-    def render(self):
-        self.g_buttons.draw(self.image)
-
-    def summon(self, creature):
-        # The buttons trigger this using the 'creature' argument to summon the correct one.
-        pass

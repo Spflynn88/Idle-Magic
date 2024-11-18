@@ -7,9 +7,6 @@ class BuildingManager:
         self.g_building_sprites = pygame.sprite.Group()
         self.building_grid = BuildingGrid(self.g_building_sprites)
 
-    def build_grid(self):
-        pass
-
     def update(self):
         self.building_grid.update()
 

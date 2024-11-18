@@ -21,10 +21,10 @@ class Resources:
             "stone": 0
         }
 
-    def __repr__(self):
+    def __repr__(self): # FIXME
         return f"Resources(mana={self.mana}, essence={self.essence}, vpearls={self.vpearls})"
 
-    def __add__(self, other):
+    def __add__(self, other):  # FIXME
         if not isinstance(other, Resources):
             return NotImplemented
 
@@ -65,7 +65,7 @@ class PopulationManager:
         pass
 
 
-class ResourceManager:
+class ResourceManager:  # FIXME
     def __init__(self):
         # Initialize resources with defaults
         self.resources_cur = Resources(5, 5, 5)
@@ -102,7 +102,7 @@ class ResourceManager:
         # Placeholder for future update logic
         pass
 
-    def add_resources(self, new_resources):
+    def add_resources(self, new_resources): # FIXME
         # Add new resources while ensuring they do not exceed maximums
         self.mana = self.resources_cur.mana + new_resources.mana
         self.essence = self.resources_cur.essence + new_resources.essence

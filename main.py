@@ -24,8 +24,6 @@ class Game:
         self.dt = 0
 
         # Vars
-        self.resource_income = 0 # The amount of resources to be added on update() DEBUG? changed to a class
-
         # FIXME - Game doesn't hold the resources the manager does
         # DEL self.resources = Resources() # This is where Game keeps track of the total resources
         self.resource_income = Resources() # This is the resources that are going to be added on update
@@ -60,7 +58,7 @@ class Game:
         self.setup()
 
     def import_assets(self):
-        # FIXME - we need to sperate out all of the images and hand them to the correct manager
+        # FIXME - we need to seperate out all of the images and hand them to the correct manager
         # this can probably move to utils also
         for filename in listdir(SPRITE_FOLDER):
             if filename.endswith('.png'):
