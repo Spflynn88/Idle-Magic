@@ -13,14 +13,18 @@ from settings import *
 
 class UIManager:
     def __init__(self, t_ui_images):
-        self.g_ui_elements = pygame.sprite.Group() # FIXME might not need a sprite group anymore
-        self.g_ui_panels = [] # List of all the panels, replaces the sprite group
-        self._ui_images = t_ui_images # List of the images needed for the UI
+        self.g_ui_elements = pygame.sprite.Group()  # FIXME might not need a sprite group anymore
+        self.g_ui_panels = []  # List of all the panels, replaces the sprite group
+        self._ui_images = t_ui_images  # List of the images needed for the UI
 
-        # UI creates all of its elements
-        # sudo
-        # create panel
-        # add panel to g_ui_panels
+        # UI creates all of its elements - create panel - add panel to g_ui_panels
+        # Side Panel
+        self.ui_panel_side = UISidePanel((0, 0), UI_SIDE_PANEL_W, UI_SIDE_PANEL_H, 'gray')
+        self.g_ui_panels.append(self.ui_panel_side)
+        # Resource Panel
+        self.ui_panel_resource = UIPanel(UI_RESOURCE_BAR_POS, SCREEN_WIDTH - UI_SIDE_PANEL_W,
+                                         50, 'blue')
+        self.g_ui_panels.append(self.ui_panel_resource)
 
     def update(self, t_resource_count) -> None:
         # FIXME - This is going to work just like render() UIM calls the update on all it's children
@@ -66,16 +70,24 @@ class UIButton(Sprite):
 
 
 class UIPanel:
-    def __init__(self, pos, t_image):
+    def __init__(self, t_pos, t_width=100, t_height=100, t_color='blue', t_image=None,):
         # t_group is still used, but the group will not be a sprite group
-        self.image = t_image       # The panel image - Not a sprite
-        self.image_base = t_image  # Back up to replace when rendering
-        self.uip_display_surface = pygame.Surface((self.image.width, self.image.height))
+        self.image = t_image  # The panel image - Not a sprite
 
-        self.pos = pos
+        if t_image:
+            self.image_base = t_image  # Back up to replace when rendering
+            self.uip_display_surface = pygame.Surface((self.image.width, self.image.height))
+        else:
+            # There is no image make a surface instead. Good for Testing
+            self.color = t_color
+            self.uip_display_surface = pygame.Surface((t_width, t_height))
+            self.uip_display_surface.fill(t_color)
+
+        self.pos = t_pos
 
         # Sprite group to hold the sprites that make up the panel elements
         self.g_sprites = pygame.sprite.Group()
+        self.build()
 
     def build(self):
         # Create all the elements needed for the panel
@@ -83,9 +95,16 @@ class UIPanel:
 
     def render(self):
         # Clear and blit the bg image
-        self.image = self.image_base.copy()
-        self.uip_display_surface.blit(self.image, (0,0))
+        if self.image:
+            self.image = self.image_base.copy()
+            self.uip_display_surface.blit(self.image, (0, 0))
+        else:
+            self.uip_display_surface.fill(self.color)
 
         # Draw the rest of the sprites
         self.g_sprites.draw(self.uip_display_surface)
 
+
+class UISidePanel(UIPanel):
+    def build(self):
+        print("Building UISidePanel")

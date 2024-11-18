@@ -22,22 +22,18 @@ STRT_ESS_CAP = 100
 STD_MARGIN_Y = int(SCREEN_HEIGHT * .035)
 STD_MARGIN_X = int(SCREEN_WIDTH * .06)
 
-UI_RESOURCE_BAR_POS = (SCREEN_WIDTH // 2 - 360, 24) # Resource Bar
-UI_MON_ROSTER_POS = (16, 24) # Monster Roster Panel
 
-BUILD_GRID_COLS = 20
-BUILD_GRID_ROWS = 20
+UI_SIDE_PANEL_W = SCREEN_WIDTH * .15
+UI_SIDE_PANEL_H = SCREEN_HEIGHT
+
+UI_RESOURCE_BAR_POS = (UI_SIDE_PANEL_W, SCREEN_HEIGHT - 50) # Resource Bar
+
+
+BUILD_GRID_COLS = 40
+BUILD_GRID_ROWS = 25
 BUILD_GRID_TILE = 32
-BUILD_GRID_START_POS = (350, 350) # FIXME All of the ui is getting redone
+BUILD_GRID_START_POS = (270 + 100, 100) # FIXME All of the ui is getting redone
 
-SUMMON_PANE_START_POS = (
-    BUILD_GRID_START_POS[0],
-    BUILD_GRID_START_POS[1] + (BUILD_GRID_ROWS * BUILD_GRID_TILE) + STD_MARGIN_Y
-)
-
-
-MON_ICON_SIZE = 128  # They are square so only 1 digit needed
-MON_ICON_OFFSET = 16  # Offset inbetween icons on the roster
 
 
 # Monsters
