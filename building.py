@@ -40,9 +40,14 @@ class BuildingGrid(pygame.sprite.Sprite):
         self.image.set_colorkey('green')
         self.image.set_alpha(255 // 2)
 
+        # Setup highlighting
+        self.hl_surf = pygame.Surface((self.tile_size, self.tile_size))
+        self.hl_surf.fill('gray')
+        self.hl_check = False
+        self.hl_pos = ()
+
     def generate_grid(self):
         pass
-
 
     def update(self):
         # Check if the mouse is over the grid, then find the tile id
@@ -50,9 +55,14 @@ class BuildingGrid(pygame.sprite.Sprite):
             # Adjust the mouse_pos by the offset
             tile_id_x = (mouse_pos()[0] - self.offset_x) // self.tile_size
             tile_id_y = (mouse_pos()[1] - self.offset_y) // self.tile_size
-
             # DEBUG
-            # print(f"{mouse_x}, {mouse_y} :: Tile id {tile_id_x},{tile_id_y}")
+            print(f"Tile id {tile_id_x},{tile_id_y}")
+
+            # Get the position of the corner of the tile
+            hl_pos_x = tile_id_x * self.tile_size
+            hl_pos_y = tile_id_y * self.tile_size
+            self.hl_check = True
+            self.hl_pos = (hl_pos_x, hl_pos_y)
 
     def render(self):
         self.image.fill('green')
@@ -64,6 +74,9 @@ class BuildingGrid(pygame.sprite.Sprite):
         for col in range(self.grid_cols + 1):
             pygame.draw.line(self.image, self.line_color, (pos_x, 0), (pos_x, self.image.get_height()))
             pos_x += self.tile_size
+
+        if self.hl_check:
+            self.image.blit(self.hl_surf, self.hl_pos)
 
 class Building:
     # Individual buildings

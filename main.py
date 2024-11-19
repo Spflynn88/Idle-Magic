@@ -110,12 +110,9 @@ class Game:
             # Game logic
             self.update()
 
-
             # Render
             # Clear the screen
             self.display_surface.fill((0, 0, 0))
-
-            # All Managers draw their sprites XXX NO UI does it, not everyone.
 
             self.ui_mngr.render(self.display_surface, self.monster_mngr.monster_sprites)
             self.building_mngr.render(self.display_surface)

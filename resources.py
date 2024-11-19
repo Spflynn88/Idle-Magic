@@ -5,35 +5,51 @@ from settings import *
 # PopulationManager keeps track of the population numbers and gives permission to summon
 # List of individual monsters and their actions will be managed by the MonsterManager
 
+# Mana is excluded from resources as it won't but used for building and just for the idle portion
+
 
 class Resources:
-    def __init__(self, mana=0, essence=0, veil_pearls=0, gems_raw=0):
-        self.mana = mana
-        self.essence = essence
-        self.vpearls = veil_pearls
-        self.gems_raw = gems_raw
-        self.gems_refined = {
-            "arcane": 0,
-            "void": 0,
-            "flame": 0,
-            "aqua": 0,
-            "wild": 0,
-            "stone": 0
-        }
+    def __init__(self, t_essence=0, t_veil_pearls=0, t_gems_raw=0, t_gems_refined=None):
+        self.essence = t_essence
+        self.vpearls = t_veil_pearls
+        self.gems_raw = t_gems_raw
+
+        if t_gems_refined:
+            self.gems_refined = t_gems_refined.copy()
+        else:
+            self.gems_refined = {
+                "void": 0,
+                "wild": 0,
+                "flame": 0,
+                "stone": 0,
+                "aqua": 0
+            }
 
     def __repr__(self): # FIXME
-        return f"Resources(mana={self.mana}, essence={self.essence}, vpearls={self.vpearls})"
+        #return f"essence={self.essence}, vpearls={self.vpearls}"
+        pass
 
-    def __add__(self, other):  # FIXME
-        if not isinstance(other, Resources):
+    def __add__(self, t_other):  # FIXME
+        if not isinstance(t_other, Resources):
             return NotImplemented
 
-        return Resources(
-            self.mana + other.mana,
-            self.essence + other.essence,
-            self.vpearls + other.vpearls
+        _gems_refined = self.gems_refined.copy()
+        for gem, value in t_other.gems_refined:
+            _gems_refined["gem"] += value
 
+        new_resource = Resources(
+            self.essence + t_other.essence,
+            self.vpearls + t_other.vpearls,
+            self.gems_raw + t_other.gems_raw,
+            _gems_refined
         )
+
+        return new_resource
+
+
+
+
+
 
 
 class PopulationManager:
@@ -67,43 +83,4 @@ class PopulationManager:
 
 class ResourceManager:  # FIXME
     def __init__(self):
-        # Initialize resources with defaults
-        self.resources_cur = Resources(5, 5, 5)
-        self.mana_max = 100
-        self.essence_max = 100
-
-
-    def __repr__(self): # FIXME
-        return (f"ResourceManager(resources={self.resources_cur}, mana_max={self.mana_max}, essence_max={self.essence_max})")
-
-    @property
-    def mana(self):
-        return self.resources_cur.mana
-
-    @mana.setter
-    def mana(self, value):
-        # Ensure mana is within allowed bounds
-        self.resources_cur.mana = max(0, min(value, self.mana_max))
-
-    @property
-    def essence(self):
-        return self.resources_cur.essence
-
-    @essence.setter
-    def essence(self, value):
-        # Ensure essence is within allowed bounds
-        self.resources_cur.essence = max(0, min(value, self.essence_max))
-
-    @property
-    def get_resources(self):
-        return self.resources_cur
-
-    def update(self):
-        # Placeholder for future update logic
-        pass
-
-    def add_resources(self, new_resources): # FIXME
-        # Add new resources while ensuring they do not exceed maximums
-        self.mana = self.resources_cur.mana + new_resources.mana
-        self.essence = self.resources_cur.essence + new_resources.essence
-
+      pass
