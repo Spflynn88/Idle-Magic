@@ -68,6 +68,7 @@ class BuildingGrid(pygame.sprite.Sprite):
         self.image.fill('green')
         pos_y = 0
         pos_x = 0
+        # Draw grid lines
         for row in range(self.grid_rows + 1):
             pygame.draw.line(self.image, self.line_color, (0, pos_y), (self.image.get_width(), pos_y))
             pos_y += self.tile_size

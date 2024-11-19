@@ -82,19 +82,17 @@ class Game:
         for monster_name, config in MONSTER_CONFIGS.items():
             config["image"] = self.images_monsters[config.get("image")]
 
-        # DEBUG - Test monster
-        self.monster_mngr.add_monster("Mana_Imp")
-        self.monster_mngr.add_monster("Mana_Imp")
 
     def update(self):
         # FIXME - Game needs to go get all the info from it's managers and then parcel it out.
 
-        self.resource_mngr.add_resources(self.resource_income) # Add income
-        self.resource_income = Resources() # Reset income
+        #self.resource_mngr.add_resources(self.resource_income) # Add income
+        #self.resource_income = Resources() # Reset income
 
         # Update UI by handing the Resources
-        self.ui_mngr.update(self.resource_mngr.resources_cur)
-        self.building_mngr.update()
+        #self.ui_mngr.update(self.resource_mngr.resources_cur)
+        #self.building_mngr.update()
+        pass
 
     def run(self) -> None:  # My need to change this later, part of a new code clarity
         while True:

@@ -47,11 +47,6 @@ class Resources:
         return new_resource
 
 
-
-
-
-
-
 class PopulationManager:
     def __init__(self):
         self._pop_max = STRT_POP_MAX
