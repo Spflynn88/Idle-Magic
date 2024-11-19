@@ -8,7 +8,7 @@ from resources import ResourceManager, PopulationManager, Resources
 from monster import MonsterManager
 from ui import UIManager
 #from spells import SpellManager
-#from utils import load_image, load_sound
+
 
 # Initialize Pygame
 pygame.init()
@@ -32,9 +32,9 @@ class Game:
         self.g_all_sprites = pygame.sprite.Group()
 
         # Image groups
-        self.images_monsters = {}
-        self.images_ui = {}
-        self.images_other = {}
+        self.images_mon = {}
+        self.images_gui = {}
+        self.images_otr = {}
         self.images_bld = {}
 
         # User Events
@@ -52,13 +52,16 @@ class Game:
         # Create game classes and give them needed assets
         self.resource_mngr = ResourceManager()
         self.pop_mngr = PopulationManager()
-        self.ui_mngr = UIManager(self.images_ui)
+        self.ui_mngr = UIManager(self.images_gui)
         self.monster_mngr = MonsterManager()
         self.building_mngr = BuildingManager(self.images_bld)
 
         self.setup()
 
     def import_assets(self):
+
+        u_import_assets()
+
         # FIXME - we need to seperate out all of the images and hand them to the correct manager
         # this can probably move to utils also
         for filename in listdir(SPRITE_FOLDER):
@@ -68,23 +71,23 @@ class Game:
 
                 # Seperate out monster images
                 if image_name[:3] == 'mon':
-                    self.images_monsters[image_name] = image
+                    self.images_mon[image_name] = image
                 # UI images
                 elif image_name[:3] == 'ui_':
-                    self.images_ui[image_name] = image
+                    self.images_gui[image_name] = image
                 # Building Images and tiles
                 elif image_name[:3] == 'bld':
                     self.images_bld[image_name] = image
 
                 # Catch all else
                 else:
-                    self.images_other[image_name] = image
+                    self.images_otr[image_name] = image
 
     def setup(self):
         # This takes the MONSTER_CONFIG dict and replaces the image name with the actual image.
         # FIXME Move this to utils.py
         for monster_name, config in MONSTER_CONFIGS.items():
-            config["image"] = self.images_monsters[config.get("image")]
+            config["image"] = self.images_mon[config.get("image")]
 
 
     def update(self):
