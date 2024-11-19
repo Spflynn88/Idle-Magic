@@ -35,6 +35,7 @@ class Game:
         self.images_monsters = {}
         self.images_ui = {}
         self.images_other = {}
+        self.images_bld = {}
 
         # User Events
         # -> Resource Gain
@@ -53,7 +54,7 @@ class Game:
         self.pop_mngr = PopulationManager()
         self.ui_mngr = UIManager(self.images_ui)
         self.monster_mngr = MonsterManager()
-        self.building_mngr = BuildingManager()
+        self.building_mngr = BuildingManager(self.images_bld)
 
         self.setup()
 
@@ -71,6 +72,9 @@ class Game:
                 # UI images
                 elif image_name[:3] == 'ui_':
                     self.images_ui[image_name] = image
+                # Building Images and tiles
+                elif image_name[:3] == 'bld':
+                    self.images_bld[image_name] = image
 
                 # Catch all else
                 else:
@@ -85,14 +89,8 @@ class Game:
 
     def update(self):
         # FIXME - Game needs to go get all the info from it's managers and then parcel it out.
+        self.building_mngr.update()
 
-        #self.resource_mngr.add_resources(self.resource_income) # Add income
-        #self.resource_income = Resources() # Reset income
-
-        # Update UI by handing the Resources
-        #self.ui_mngr.update(self.resource_mngr.resources_cur)
-        #self.building_mngr.update()
-        pass
 
     def run(self) -> None:  # My need to change this later, part of a new code clarity
         while True:
@@ -102,8 +100,7 @@ class Game:
                     pygame.quit()
                     exit()
                 if event.type == self.event_resource_gain:
-                    print (f"DB Resource gain event trigger {self.monster_mngr.calc_resource_yield()}") # DEBUG
-                    self.resource_income += self.monster_mngr.calc_resource_yield()
+                    pass
 
             # Game logic
             self.update()
