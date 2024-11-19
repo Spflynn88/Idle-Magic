@@ -12,7 +12,7 @@ from settings import *
 
 class UIManager:
     def __init__(self, t_ui_images):
-        self.g_ui_elements = pygame.sprite.Group()  # FIXME might not need a sprite group anymore
+        self.sg_ui_elements = pygame.sprite.Group()  # FIXME might not need a sprite group anymore
         self.g_ui_panels = []  # List of all the panels, replaces the sprite group
         self._ui_images = t_ui_images  # List of the images needed for the UI
 
@@ -31,7 +31,7 @@ class UIManager:
         pass
 
     def render(self, display_surface, *sprite_groups) -> None:
-        # Build the UI elements - They run their render first, then the UIManager finishes by drawing from it's group
+        # Build the UI elements - They run their render first, then the UIManager finishes by drawing from its group
 
         # Prep the panels
         for element in self.g_ui_panels:

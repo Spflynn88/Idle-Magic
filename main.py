@@ -59,6 +59,7 @@ class Game:
 
     def import_assets(self):
         assets = u_import_assets()
+        # All the groups are listed in init, this won't throw an error if an image is mis-named
         for key in assets:
             setattr(self, key, assets[key])
 
