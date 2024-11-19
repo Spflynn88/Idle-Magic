@@ -1,8 +1,5 @@
-import pygame
 from settings import *
-
-# Alias
-mouse_pos = pygame.mouse.get_pos
+from os import listdir
 
 
 def u_import_assets():
@@ -21,4 +18,4 @@ def u_import_assets():
                 images[_key] = {}
                 images[_key][image_name] = image
 
-        print(images)
+    return images

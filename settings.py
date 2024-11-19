@@ -1,10 +1,6 @@
-from typing import Tuple
-
 import pygame
 import os.path
-from os import listdir
-import random
-from utils import *
+
 
 SCREEN_WIDTH = 1792 # 1280
 SCREEN_HEIGHT = 1024 # 800
@@ -34,6 +30,9 @@ BUILD_GRID_ROWS = 25
 BUILD_GRID_TILE = 32
 BUILD_GRID_START_POS = (270 + 100, 100) # FIXME All of the ui is getting redone
 
+
+# Alias
+mouse_pos = pygame.mouse.get_pos
 
 
 # Monsters

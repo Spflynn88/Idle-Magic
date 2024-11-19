@@ -1,5 +1,3 @@
-# PopulationManager ResourceManager
-import pygame
 from settings import *
 
 # PopulationManager keeps track of the population numbers and gives permission to summon

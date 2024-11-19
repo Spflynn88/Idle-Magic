@@ -1,6 +1,5 @@
-import pygame.sprite
-
 from settings import *
+from utils import *
 from sys import exit
 from building import *
 
@@ -59,29 +58,12 @@ class Game:
         self.setup()
 
     def import_assets(self):
+        assets = u_import_assets()
+        self.images_mon = assets.get("images_mon", None)
+        self.images_gui = assets.get("images_gui", None)
+        self.images_otr = assets.get("images_otr", None)
+        self.images_bld = assets.get("images_bld", None)
 
-        u_import_assets()
-
-        # FIXME - we need to seperate out all of the images and hand them to the correct manager
-        # this can probably move to utils also
-        for filename in listdir(SPRITE_FOLDER):
-            if filename.endswith('.png'):
-                image_name = os.path.splitext(filename)[0]
-                image = pygame.image.load(os.path.join(SPRITE_FOLDER, filename)).convert_alpha()
-
-                # Seperate out monster images
-                if image_name[:3] == 'mon':
-                    self.images_mon[image_name] = image
-                # UI images
-                elif image_name[:3] == 'ui_':
-                    self.images_gui[image_name] = image
-                # Building Images and tiles
-                elif image_name[:3] == 'bld':
-                    self.images_bld[image_name] = image
-
-                # Catch all else
-                else:
-                    self.images_otr[image_name] = image
 
     def setup(self):
         # This takes the MONSTER_CONFIG dict and replaces the image name with the actual image.
