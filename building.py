@@ -3,51 +3,63 @@ from settings import *
 
 class BuildingManager:
     # The building manager will display the building grid and manage it.
-    def __init__(self):
+    def __init__(self, t_images_bld):
+        self._images_bld = t_images_bld
+
+        # DEGUB
+        print("Checking bld images")
+        for key in self._images_bld:
+            print(f"Key image {key}")
+
         self.g_building_sprites = pygame.sprite.Group()
-        self.building_grid = BuildingGrid(self.g_building_sprites)
+        self.building_grid = BuildingGrid(self._images_bld, self.g_building_sprites)
 
     def update(self):
         self.building_grid.update()
 
     def render(self, t_display_surface):
+        # STD pattern the manager calls the render of its children, then draws its own group
         self.building_grid.render()
 
         self.g_building_sprites.draw(t_display_surface)
 
 
 class BuildingGrid(pygame.sprite.Sprite):
-    def __init__(self, t_group):
+    def __init__(self, t_bld_images, t_group):
         super().__init__(t_group)
         self.grid_rows = BUILD_GRID_ROWS
         self.grid_cols = BUILD_GRID_COLS
         self.tile_size = BUILD_GRID_TILE
 
-        self.line_width = 2
-        self.line_color = 'gray'
+        self._bld_images = t_bld_images  # Images of the needed buildings and tiles
 
-        # Create the offset from 0,0 so that the mouse_pos can figure out which tile it's over
+        # I don't want every grid tile checking every tick, so this is going to help point to the needed one.
         self.offset_x = BUILD_GRID_START_POS[0]
         self.offset_y = BUILD_GRID_START_POS[1]
 
         # Create the Surface
-        self.image = pygame.Surface((self.grid_cols * self.tile_size + self.line_width,
-                                     self.grid_rows * self.tile_size + self.line_width))
+        self.image = pygame.Surface((self.grid_cols * self.tile_size,
+                                     self.grid_rows * self.tile_size))
         self.rect = self.image.get_frect(topleft=BUILD_GRID_START_POS)
 
-        # Setup color key
-        self.image.fill('green')
-        self.image.set_colorkey('green')
-        self.image.set_alpha(255 // 2)
-
-        # Setup highlighting
-        self.hl_surf = pygame.Surface((self.tile_size, self.tile_size))
-        self.hl_surf.fill('gray')
-        self.hl_check = False
-        self.hl_pos = ()
+        # Create the grid
+        self.g_grid_tiles = pygame.sprite.Group()
+        self._grid = self.generate_grid()
 
     def generate_grid(self):
-        pass
+        final_grid = []  # The final grid containing all rows
+        for col in range(self.grid_cols):  # Iterate through grid columns
+            row_grid = []  # Reset the row grid for the current column
+            for row in range(self.grid_rows):  # Iterate through grid rows
+                _new_tile = GridTile(
+                    (col * self.tile_size, row * self.tile_size),  # Position
+                    self._bld_images["bld_grd_tile"],  # Tile image
+                    self.g_grid_tiles,  # Tile group
+                    (col, row)
+                )
+                row_grid.append(_new_tile)
+            final_grid.append(row_grid)
+        return final_grid
 
     def update(self):
         # Check if the mouse is over the grid, then find the tile id
@@ -58,26 +70,29 @@ class BuildingGrid(pygame.sprite.Sprite):
             # DEBUG
             print(f"Tile id {tile_id_x},{tile_id_y}")
 
-            # Get the position of the corner of the tile
-            hl_pos_x = tile_id_x * self.tile_size
-            hl_pos_y = tile_id_y * self.tile_size
-            self.hl_check = True
-            self.hl_pos = (hl_pos_x, hl_pos_y)
+            self._grid[tile_id_x][tile_id_y].update(self._bld_images["bld_grd_htile"])
 
     def render(self):
-        self.image.fill('green')
-        pos_y = 0
-        pos_x = 0
-        # Draw grid lines
-        for row in range(self.grid_rows + 1):
-            pygame.draw.line(self.image, self.line_color, (0, pos_y), (self.image.get_width(), pos_y))
-            pos_y += self.tile_size
-        for col in range(self.grid_cols + 1):
-            pygame.draw.line(self.image, self.line_color, (pos_x, 0), (pos_x, self.image.get_height()))
-            pos_x += self.tile_size
+        self.image.fill('black')
+        self.g_grid_tiles.draw(self.image)
 
-        if self.hl_check:
-            self.image.blit(self.hl_surf, self.hl_pos)
+
+class GridTile(pygame.sprite.Sprite):
+    '''
+    These need to be made with the default tile image being given first. It saves it as the defualt. I'm not sure this
+    is great though as it makes it less flexible.
+    '''
+    def __init__(self, t_pos, t_image, t_groups, t_tile_id):
+        super().__init__(t_groups)
+        self.image_default = t_image
+        self.image = t_image
+        self.rect = self.image.get_frect(topleft=t_pos)
+        self.tile_id = t_tile_id
+
+        self.hl_dirty = False  # This changes when the tile gets high-lighted then is used to reset.
+
+    def update(self, t_image):
+        self.image = t_image
 
 class Building:
     # Individual buildings
