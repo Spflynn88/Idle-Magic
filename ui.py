@@ -30,7 +30,7 @@ class UIManager:
         # called from Game, takes Resource()
         pass
 
-    def render(self, display_surface, t_sprites_monsters, *sprite_groups) -> None:
+    def render(self, display_surface, *sprite_groups) -> None:
         # Build the UI elements - They run their render first, then the UIManager finishes by drawing from it's group
 
         # Prep the panels

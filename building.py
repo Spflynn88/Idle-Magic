@@ -67,10 +67,8 @@ class BuildingGrid(pygame.sprite.Sprite):
             # Adjust the mouse_pos by the offset
             tile_id_x = (mouse_pos()[0] - self.offset_x) // self.tile_size
             tile_id_y = (mouse_pos()[1] - self.offset_y) // self.tile_size
-            # DEBUG
-            # print(f"Tile id {tile_id_x},{tile_id_y}")
 
-            self._grid[tile_id_x][tile_id_y].update(self._bld_images["bld_grd_htile"])
+            self._grid[tile_id_x][tile_id_y].highlight(self._bld_images["bld_grd_htile"])
 
     def render(self):
         self.image.fill('black')
@@ -91,7 +89,10 @@ class GridTile(pygame.sprite.Sprite):
 
         self.hl_dirty = False  # This changes when the tile gets high-lighted then is used to reset.
 
-    def update(self, t_image):
+    def update(self):
+        pass
+
+    def highlight(self, t_image):
         self.image = t_image
 
 class Building:

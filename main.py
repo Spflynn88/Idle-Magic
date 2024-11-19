@@ -30,7 +30,7 @@ class Game:
         # Sprite Groups
         self.g_all_sprites = pygame.sprite.Group()
 
-        # Image groups
+        # Image groups - these are forced below in import_assets but here to list what they should be
         self.images_mon = {}
         self.images_gui = {}
         self.images_otr = {}
@@ -49,20 +49,18 @@ class Game:
         self.import_assets()
 
         # Create game classes and give them needed assets
-        self.resource_mngr = ResourceManager()
-        self.pop_mngr = PopulationManager()
-        self.ui_mngr = UIManager(self.images_gui)
-        self.monster_mngr = MonsterManager()
-        self.building_mngr = BuildingManager(self.images_bld)
+        self.mngr_resource = ResourceManager()
+        self.mngr_pop = PopulationManager()
+        self.mngr_ui = UIManager(self.images_gui)
+        self.mngr_monster = MonsterManager()
+        self.mngr_building = BuildingManager(self.images_bld)
 
         self.setup()
 
     def import_assets(self):
         assets = u_import_assets()
-        self.images_mon = assets.get("images_mon", None)
-        self.images_gui = assets.get("images_gui", None)
-        self.images_otr = assets.get("images_otr", None)
-        self.images_bld = assets.get("images_bld", None)
+        for key in assets:
+            setattr(self, key, assets[key])
 
 
     def setup(self):
@@ -74,10 +72,10 @@ class Game:
 
     def update(self):
         # FIXME - Game needs to go get all the info from it's managers and then parcel it out.
-        self.building_mngr.update()
+        self.mngr_building.update()
 
 
-    def run(self) -> None:  # My need to change this later, part of a new code clarity
+    def run(self) -> None:  # My need to change this later, code clarity tag
         while True:
             # Event Loop
             for event in pygame.event.get():
@@ -87,6 +85,7 @@ class Game:
                 if event.type == self.event_resource_gain:
                     pass
 
+
             # Game logic
             self.update()
 
@@ -94,8 +93,8 @@ class Game:
             # Clear the screen
             self.display_surface.fill((0, 0, 0))
 
-            self.ui_mngr.render(self.display_surface, self.monster_mngr.monster_sprites)
-            self.building_mngr.render(self.display_surface)
+            self.mngr_ui.render(self.display_surface)
+            self.mngr_building.render(self.display_surface)
 
             pygame.display.update()
 
