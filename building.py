@@ -3,16 +3,19 @@ from settings import *
 
 class BuildingManager:
     # The building manager will display the building grid and manage it.
-    def __init__(self, t_images_bld):
-        self._images_bld = t_images_bld
+    def __init__(self, t_images_til):
+        self._images_til = t_images_til
 
         # DEGUB
         print("Checking bld images")
-        for key in self._images_bld:
+        for key in self._images_til:
             print(f"Key image {key}")
 
         self.g_building_sprites = pygame.sprite.Group()
-        self.building_grid = BuildingGrid(self._images_bld, self.g_building_sprites)
+        self.building_grid = BuildingGrid(self._images_til, self.g_building_sprites)
+
+    def add_builing(self):
+        pass
 
     def update(self):
         self.building_grid.update()
@@ -25,17 +28,18 @@ class BuildingManager:
 
 
 class BuildingGrid(pygame.sprite.Sprite):
-    def __init__(self, t_bld_images, t_group):
+    def __init__(self, t_images_til, t_group):
         super().__init__(t_group)
         self.grid_rows = BUILD_GRID_ROWS
         self.grid_cols = BUILD_GRID_COLS
         self.tile_size = BUILD_GRID_TILE
 
-        self._bld_images = t_bld_images  # Images of the needed buildings and tiles
+        self._bld_images = t_images_til  # Images of the needed buildings and tiles
 
         # I don't want every grid tile checking every tick, so this is going to help point to the needed one.
         self.offset_x = BUILD_GRID_START_POS[0]
         self.offset_y = BUILD_GRID_START_POS[1]
+        self.dirty = []
 
         # Create the Surface
         self.image = pygame.Surface((self.grid_cols * self.tile_size,
@@ -53,22 +57,32 @@ class BuildingGrid(pygame.sprite.Sprite):
             for row in range(self.grid_rows):  # Iterate through grid rows
                 _new_tile = GridTile(
                     (col * self.tile_size, row * self.tile_size),  # Position
-                    self._bld_images["bld_grd_tile"],  # Tile image
                     self.g_grid_tiles,  # Tile group
-                    (col, row)
+                    (col, row),
+                    TILE_CONFIGS_NATURE["default"]
                 )
                 row_grid.append(_new_tile)
             final_grid.append(row_grid)
         return final_grid
 
     def update(self):
+        for tile in self.dirty:
+            tile.image = tile.image_default.copy()
+
         # Check if the mouse is over the grid, then find the tile id
         if self.rect.collidepoint(mouse_pos()):
             # Adjust the mouse_pos by the offset
             tile_id_x = (mouse_pos()[0] - self.offset_x) // self.tile_size
             tile_id_y = (mouse_pos()[1] - self.offset_y) // self.tile_size
 
-            self._grid[tile_id_x][tile_id_y].highlight(self._bld_images["bld_grd_htile"])
+            print(f"{tile_id_x},{tile_id_y} - Highlight")
+            tile = self._grid[tile_id_x][tile_id_y]
+            tile.highlight()
+            self.dirty.append(tile)
+
+        for row in self._grid:
+            for tile in row:
+                tile.update()
 
     def render(self):
         self.image.fill('black')
@@ -80,20 +94,22 @@ class GridTile(pygame.sprite.Sprite):
     These need to be made with the default tile image being given first. It saves it as the defualt. I'm not sure this
     is great though as it makes it less flexible.
     '''
-    def __init__(self, t_pos, t_image, t_groups, t_tile_id):
+    def __init__(self, t_pos, t_groups, t_tile_id, t_config):
         super().__init__(t_groups)
-        self.image_default = t_image
-        self.image = t_image
+        self.image_default = t_config["image"]
+        self.image = t_config["image"]
+        self.image_h = t_config["image_h"]
         self.rect = self.image.get_frect(topleft=t_pos)
         self.tile_id = t_tile_id
-
-        self.hl_dirty = False  # This changes when the tile gets high-lighted then is used to reset.
 
     def update(self):
         pass
 
-    def highlight(self, t_image):
-        self.image = t_image
+
+    def highlight(self):
+        self.image = self.image_h
+
+
 
 class Building:
     # Individual buildings

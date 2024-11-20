@@ -34,6 +34,28 @@ BUILD_GRID_START_POS = (270 + 100, 100) # FIXME All of the ui is getting redone
 # Alias
 mouse_pos = pygame.mouse.get_pos
 
+# Tile Configuration for player built tiles
+TILE_CONFIGS_BLD = {
+    "default": {"image": "til_bld_tst",
+                "image_h": "til_hdefault",
+                "type": "building",
+                "hazard": False,
+                "can_build": False,
+                "water": False,
+                "can_select": True,
+}}
+
+# Tile Configuations for natural tiles
+TILE_CONFIGS_NATURE = {
+    "default": {"image": "til_default",
+                "image_h": "til_hdefault",
+                "type": None,
+                "hazard": False,
+                "can_build": True,
+                "water": False
+}}
+
+
 
 # Monsters
 # Monster configurations
