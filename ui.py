@@ -16,6 +16,8 @@ class UIManager:
         self.g_ui_panels = []  # List of all the panels, replaces the sprite group
         self._ui_images = t_ui_images  # List of the images needed for the UI
 
+        # FIXME - what if here we dispense the needed images to the sub-classes then t_ui_images doesn't need to be saved
+
         # UI creates all of its elements - create panel - add panel to g_ui_panels
         # Side Panel
         self.ui_panel_side = UISidePanel((0, 0), UI_SIDE_PANEL_W, UI_SIDE_PANEL_H, 'gray')
@@ -31,13 +33,8 @@ class UIManager:
         pass
 
     def render(self, display_surface, *sprite_groups) -> None:
-        # Build the UI elements - They run their render first, then the UIManager finishes by drawing from its group
-
-        # Prep the panels
         for element in self.g_ui_panels:
             element.render()
-        # Draw the UI
-        for element in self.g_ui_panels:
             display_surface.blit(element.uip_display_surface, element.pos)
 
 
@@ -86,6 +83,7 @@ class UIPanel:
 
         # Sprite group to hold the sprites that make up the panel elements
         self.g_sprites = pygame.sprite.Group()
+        self.sub_panels = []
         self.build()
 
     def build(self):
@@ -100,10 +98,31 @@ class UIPanel:
         else:
             self.uip_display_surface.fill(self.color)
 
-        # Draw the rest of the sprites
+       # Call render for all the subpanels
+        for sub_panel in self.sub_panels:
+            sub_panel.render()
+            # Blit the sub panel
+            self.uip_display_surface.blit(sub_panel.uip_display_surface, sub_panel.pos)
+
+        # Draw any sprites in the sprite group
         self.g_sprites.draw(self.uip_display_surface)
 
 
 class UISidePanel(UIPanel):
+    def __init__(self, t_pos, t_width=100, t_height=100, t_color='gray', t_image=None):
+        # Initialize the base UIPanel
+        super().__init__(t_pos, t_width, t_height, t_color, t_image)
+
+        self.sub_panels = [self.ui_sp_build_panel] # UI Side Panel
+
     def build(self):
         print("Building UISidePanel")
+        self.ui_sp_build_panel = UIPanel((0, 0), t_color='red')
+        self.sub_panels.append(self.ui_build_panel)
+
+    def render(self):
+        super().render()  # Render this panel
+        # Render the sub_panels
+        for sub_panel in self.sub_panels:
+            sub_panel.render()
+            self.uip_display_surface.blit(sub_panel.uip_display_surface, sub_panel.pos)

@@ -69,23 +69,16 @@ class Game:
         self.mngr_building = BuildingManager(self.images_til)
 
     def import_assets(self):
+        # Takes the dictionary and breaks it up into image groups.
         assets = u_import_assets()
         # All the groups are listed in init, this won't throw an error if an image is mis-named
         for key in assets:
             setattr(self, key, assets[key])
 
     def setup(self):
-        # This takes the MONSTER_CONFIG dict and replaces the image name with the actual image.
-        # FIXME Move this to utils.py
-        for monster_name, config in MONSTER_CONFIGS.items():
-            config["image"] = self.images_mon[config.get("image")]
+        # This takes the MONSTER_CONFIG and TILE_CONFIG dict and replaces the image name with the actual image.
+        u_images_to_config(self.images_mon, self.images_til)
 
-        print(f"waiting to convert nature tiles")
-        for tile_name, config in TILE_CONFIGS_NATURE.items():
-            # DEBUG
-            # print(f"game.setup tile images {tile_name}, {config}")
-            config["image"] = self.images_til[config.get("image")]
-            config["image_h"] = self.images_til[config.get("image_h")]
 
     def update(self):
         # FIXME - Game needs to go get all the info from it's managers and then parcel it out.

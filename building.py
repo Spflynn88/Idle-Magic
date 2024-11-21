@@ -14,7 +14,7 @@ class BuildingManager:
         self.g_building_sprites = pygame.sprite.Group()
         self.building_grid = BuildingGrid(self._images_til, self.g_building_sprites)
 
-    def add_builing(self):
+    def add_building(self):
         pass
 
     def update(self):
@@ -59,7 +59,7 @@ class BuildingGrid(pygame.sprite.Sprite):
                     (col * self.tile_size, row * self.tile_size),  # Position
                     self.g_grid_tiles,  # Tile group
                     (col, row),
-                    TILE_CONFIGS_NATURE["default"]
+                    TILE_CONFIGS_NATURE["nat_default"]
                 )
                 row_grid.append(_new_tile)
             final_grid.append(row_grid)
