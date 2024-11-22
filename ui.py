@@ -1,3 +1,4 @@
+import pygame.draw
 from pygame.sprite import Sprite
 from settings import *
 
@@ -11,45 +12,73 @@ from settings import *
 
 
 class UIManager:
-    def __init__(self, t_ui_images):
+    _cls_images = None  # Image needed by the UI
+    _cls_config = None  # The UI config file
+
+    def __init__(self):
         self.sg_ui_elements = pygame.sprite.Group()  # FIXME might not need a sprite group anymore
-        self.g_ui_panels = []  # List of all the panels, replaces the sprite group
-        self._ui_images = t_ui_images  # List of the images needed for the UI
+        self.g_ui_panels = {}  # List of all the panels, replaces the sprite group
 
-        # FIXME - what if here we dispense the needed images to the sub-classes then t_ui_images doesn't need to be saved
+        self.ui_build()
 
-        # UI creates all of its elements - create panel - add panel to g_ui_panels
-        # Side Panel
-        self.ui_panel_side = UISidePanel((0, 0), UI_SIDE_PANEL_W, UI_SIDE_PANEL_H, 'gray')
-        self.g_ui_panels.append(self.ui_panel_side)
-        # Resource Panel
-        self.ui_panel_resource = UIPanel(UI_RESOURCE_BAR_POS, SCREEN_WIDTH - UI_SIDE_PANEL_W,
-                                         50, 'blue')
-        self.g_ui_panels.append(self.ui_panel_resource)
+    @classmethod
+    def load_settings(cls, t_images, t_config):
+        cls._cls_images = t_images
+        cls._cls_config = t_config
 
-    def update(self, t_resource_count) -> None:
+    def get_panel(self, t_name):
+        return self.g_ui_panels[t_name]
+
+    def ui_build(self):
+        # This is going to use the UI Config to assemble the UI
+        for panel_name, config in UIManager._cls_config.items():
+            self.g_ui_panels[panel_name] = UIPanel(
+                config["pos"],
+                config["width"],
+                config["height"],
+                config["color"],
+                config["image"],
+                config["buttons"]
+            )
+
+            # Handle sub-panels
+            if "sub_panels" in config:
+                self.g_ui_panels[panel_name].sub_panels = {}
+                for sub_panel_name, sub_panel_config in config["sub_panels"].items():
+                    sub_panel = UIPanel(
+                        sub_panel_config["pos"],
+                        sub_panel_config["width"],
+                        sub_panel_config["height"],
+                        sub_panel_config["color"],
+                        sub_panel_config["image"],
+                        sub_panel_config["buttons"]
+                    )
+                    self.g_ui_panels[panel_name].sub_panels[sub_panel_name] = sub_panel
+
+    def update(self) -> None:
         # FIXME - This is going to work just like render() UIM calls the update on all it's children
-        # called from Game, takes Resource()
-        pass
+        for name, panel in self.g_ui_panels.items():
+            panel.update()
 
     def render(self, display_surface, *sprite_groups) -> None:
-        for element in self.g_ui_panels:
-            element.render()
-            display_surface.blit(element.uip_display_surface, element.pos)
+        for panel_name, panel in self.g_ui_panels.items():
+            panel.render()
+            display_surface.blit(panel.uip_display_surface, panel.pos)
 
 
 class UIButton(Sprite):
     # The UI element that makes the button will pass it the needed action function
     # FIXME - make a defualt pic for easy protoing
     # FIXME - needs more properties to make it flexible (*args, **kwargs))
-    def __init__(self, pos, t_image, group, callback=None):
-        super().__init__(group)
+    def __init__(self, pos, t_image, t_group, callback=None):
+        super().__init__(t_group)
         self.image = t_image
         self.rect = self.image.get_rect(topleft=pos)
         self.callback = callback
 
     def update(self):
-        pass
+        if self.rect.collidepoint(mouse_pos()):
+            self.on_hover()
 
     def on_hover(self):
         pass
@@ -66,9 +95,16 @@ class UIButton(Sprite):
 
 
 class UIPanel:
-    def __init__(self, t_pos, t_width=100, t_height=100, t_color='blue', t_image=None,):
+    _cls_images = None
+
+    def __init__(self, t_pos, t_width=100, t_height=100, t_color='blue', t_image=None, t_buttons=None):
         # t_group is still used, but the group will not be a sprite group
         self.image = t_image  # The panel image - Not a sprite
+        self.pos = t_pos
+
+        # Sprite group to hold the sprites that make up the panel elements
+        self.g_sprites = pygame.sprite.Group()
+        self.sub_panels = {}
 
         if t_image:
             self.image_base = t_image  # Back up to replace when rendering
@@ -79,16 +115,32 @@ class UIPanel:
             self.uip_display_surface = pygame.Surface((t_width, t_height))
             self.uip_display_surface.fill(t_color)
 
-        self.pos = t_pos
+        if t_buttons:
+            self.buttons_config = t_buttons  # Save the button config
+            self.build_buttons()
 
-        # Sprite group to hold the sprites that make up the panel elements
-        self.g_sprites = pygame.sprite.Group()
-        self.sub_panels = []
-        self.build()
+    @classmethod
+    def load_settings(cls, t_images):
+        cls._cls_images = t_images
 
-    def build(self):
-        # Create all the elements needed for the panel
-        pass
+    def build_buttons(self):
+        # Create any needed buttons
+        for button, config in self.buttons_config.items():
+            UIButton(
+                config["pos"],
+                UIPanel._cls_images[config["image"]].copy(),
+                self.g_sprites,
+                config["callback"]
+            )
+
+    def update(self):
+        if self.sub_panels:
+            for panel in self.sub_panels.values():
+                panel.update()
+        if self.g_sprites:
+            for sprite in self.g_sprites:
+                sprite.update()
+
 
     def render(self):
         # Clear and blit the bg image
@@ -99,30 +151,10 @@ class UIPanel:
             self.uip_display_surface.fill(self.color)
 
        # Call render for all the subpanels
-        for sub_panel in self.sub_panels:
+        for sub_panel in self.sub_panels.values():
             sub_panel.render()
             # Blit the sub panel
             self.uip_display_surface.blit(sub_panel.uip_display_surface, sub_panel.pos)
 
         # Draw any sprites in the sprite group
         self.g_sprites.draw(self.uip_display_surface)
-
-
-class UISidePanel(UIPanel):
-    def __init__(self, t_pos, t_width=100, t_height=100, t_color='gray', t_image=None):
-        # Initialize the base UIPanel
-        super().__init__(t_pos, t_width, t_height, t_color, t_image)
-
-        self.sub_panels = [self.ui_sp_build_panel] # UI Side Panel
-
-    def build(self):
-        print("Building UISidePanel")
-        self.ui_sp_build_panel = UIPanel((0, 0), t_color='red')
-        self.sub_panels.append(self.ui_build_panel)
-
-    def render(self):
-        super().render()  # Render this panel
-        # Render the sub_panels
-        for sub_panel in self.sub_panels:
-            sub_panel.render()
-            self.uip_display_surface.blit(sub_panel.uip_display_surface, sub_panel.pos)

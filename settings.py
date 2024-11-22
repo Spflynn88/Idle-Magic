@@ -17,10 +17,6 @@ STRT_ESS_CAP = 100
 STD_MARGIN_Y = int(SCREEN_HEIGHT * .035)
 STD_MARGIN_X = int(SCREEN_WIDTH * .06)
 
-UI_SIDE_PANEL_W = SCREEN_WIDTH * .15
-UI_SIDE_PANEL_H = SCREEN_HEIGHT
-
-UI_RESOURCE_BAR_POS = (UI_SIDE_PANEL_W, SCREEN_HEIGHT - 50)  # Resource Bar
 
 BUILD_GRID_COLS = 40
 BUILD_GRID_ROWS = 25
@@ -66,4 +62,39 @@ MONSTER_CONFIGS = {
                  "hp_per_lvl": 1,
                  "attack_per_level": 1,
                  "defense_per_lvl": 1}
+}
+
+# I think I'll just name the buttons, then use another file for their config
+UI_LAYOUT_CONFIG= {
+    "side_panel": {
+        "pos": (0, 0),
+        "width": SCREEN_WIDTH * .15,
+        "height": SCREEN_HEIGHT,
+        "color": "blue",
+        "image": None,
+        "buttons": None,
+        "sub_panels": {
+            "build_btn_panel": {
+                "pos": (0, 16),
+                "width": SCREEN_WIDTH * .15,
+                "height": 100,
+                "color": "darkblue",
+                "image": None,
+                "buttons": {
+                    "build_1": {"pos": (8, 8), "image": "btn_bld_default", "image_h": "btn_bld_default_h",
+                                "callback": None},
+                    "build_2": {"pos": (80, 8), "image": "btn_bld_default", "image_h": "btn_bld_default_h",
+                                "callback": None}
+                }
+            },
+            "footer_panel": {
+                "pos": (0, SCREEN_HEIGHT - 100),
+                "width": SCREEN_WIDTH * .15,
+                "height": 100,
+                "color": "darkgray",
+                "image": None,
+                "buttons": None
+            }
+        }
+    }
 }

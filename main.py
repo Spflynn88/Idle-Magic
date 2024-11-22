@@ -7,7 +7,7 @@ from building import *
 
 from resources import ResourceManager, PopulationManager, Resources
 from monster import MonsterManager
-from ui import UIManager
+from ui import UIManager, UIPanel
 #from spells import SpellManager
 
 
@@ -37,6 +37,7 @@ class Game:
         self.images_gui = {}
         self.images_otr = {}
         self.images_til = {}
+        self.images_btn = {}
 
         # User Events
         # -> Resource Gain - Not in use right now
@@ -64,7 +65,7 @@ class Game:
         # Create game classes and give them needed assets
         self.mngr_resource = ResourceManager()
         self.mngr_pop = PopulationManager()
-        self.mngr_ui = UIManager(self.images_gui)
+        self.mngr_ui = UIManager()
         self.mngr_monster = MonsterManager()
         self.mngr_building = BuildingManager(self.images_til)
 
@@ -79,10 +80,15 @@ class Game:
         # This takes the MONSTER_CONFIG and TILE_CONFIG dict and replaces the image name with the actual image.
         u_images_to_config(self.images_mon, self.images_til)
 
+        # Class the UI class method to give it images and config
+        UIManager.load_settings(self.images_gui, UI_LAYOUT_CONFIG)
+        UIPanel.load_settings(self.images_btn)
+
 
     def update(self):
         # FIXME - Game needs to go get all the info from it's managers and then parcel it out.
         self.mngr_building.update()
+        self.mngr_ui.update()
 
     def run(self) -> None:  # My need to change this later, code clarity tag
         while True:
@@ -92,11 +98,10 @@ class Game:
                     pygame.quit()
                     exit()
                 if not any(self.game_states.values()):
+                    # Allows the use of the ESC key to clear the game state
                     if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
                         self.game_states = {key: False for key in self.game_states}
                         print(f"Esc key - game.game_states {self.game_states}")
-
-
 
             # Game logic
             self.update()

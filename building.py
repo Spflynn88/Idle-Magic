@@ -68,6 +68,7 @@ class BuildingGrid(pygame.sprite.Sprite):
     def update(self):
         for tile in self.dirty:
             tile.image = tile.image_default.copy()
+            self.dirty.remove(tile)
 
         # Check if the mouse is over the grid, then find the tile id
         if self.rect.collidepoint(mouse_pos()):
@@ -75,7 +76,7 @@ class BuildingGrid(pygame.sprite.Sprite):
             tile_id_x = (mouse_pos()[0] - self.offset_x) // self.tile_size
             tile_id_y = (mouse_pos()[1] - self.offset_y) // self.tile_size
 
-            print(f"{tile_id_x},{tile_id_y} - Highlight")
+            # print(f"{tile_id_x},{tile_id_y} - Highlight")
             tile = self._grid[tile_id_x][tile_id_y]
             tile.highlight()
             self.dirty.append(tile)
