@@ -94,6 +94,8 @@ class Game:
         while True:
             # Event Loop
             for event in pygame.event.get():
+                # DEBUG
+                # print(f"Event: {event} Details {event.dict}")
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
@@ -102,6 +104,9 @@ class Game:
                     if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
                         self.game_states = {key: False for key in self.game_states}
                         print(f"Esc key - game.game_states {self.game_states}")
+
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        pass
 
             # Game logic
             self.update()

@@ -25,6 +25,7 @@ BUILD_GRID_START_POS = (270 + 100, 100)  # FIXME All of the ui is getting redone
 
 # Alias
 mouse_pos = pygame.mouse.get_pos
+sprite_group = pygame.sprite.Group
 
 # Tile Configuration for player built tiles
 TILE_CONFIGS_BLD = {
@@ -93,7 +94,12 @@ UI_LAYOUT_CONFIG= {
                 "height": 100,
                 "color": "darkgray",
                 "image": None,
-                "buttons": None
+                "buttons": {
+                            "build_1": {"pos": (8, 8), "image": "btn_bld_default", "image_h": "btn_bld_default_h",
+                                        "callback": None},
+                            "build_2": {"pos": (80, 8), "image": "btn_bld_default", "image_h": "btn_bld_default_h",
+                                        "callback": None}
+                }
             }
         }
     }
